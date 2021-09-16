@@ -32,6 +32,7 @@ public:
     explicit DatetimeWidget(QWidget *parent = 0);
 
     bool is24HourFormat() const { return m_24HourFormat; }
+    bool isShowSecond() const { return m_showSecond; }
     bool isShowDate() const { return m_showDate; }
     bool isShowLunar() const { return m_showLunar; }
     bool isShowWeek() const { return m_showWeek; }
@@ -43,6 +44,7 @@ signals:
 
 public slots:
     void set24HourFormat(const bool value);
+    void setShowSecond(const bool value);
     void setShowDate(const bool value);
     void setShowLunar(const bool value);
     void setShowWeek(const bool value);
@@ -53,6 +55,7 @@ private:
 
 private:
     bool m_24HourFormat;
+    bool m_showSecond;
     bool m_showDate;
     bool m_showLunar;
     bool m_showWeek;

@@ -582,6 +582,16 @@ void DatetimeWidget::set24HourFormat(const bool value)
     update();
 }
 
+void DatetimeWidget::setShowSecond(const bool value)
+{
+    if(m_showSecond != value)
+    {
+        m_showSecond = value;
+        updateGeometry();
+        update();
+    }
+}
+
 void DatetimeWidget::setShowWeek(const bool value)
 {
 	if(m_showWeek != value)
@@ -625,10 +635,10 @@ QString DatetimeWidget::currentChinaTime() const
 
     if (m_showDate)
     {
-        date.append(current.toString("yyyy/MM/dd"));
+        date.append(QLocale::system().toString(current.date(), QLocale::ShortFormat));
     }
 
-    date.append(current.toString(m_24HourFormat ? "hh:mm" : "hh:mm AP"));
+    date.append(QLocale::system().toString(current.time(), m_showSecond ? QLocale::LongFormat : QLocale::ShortFormat));
 
     if(m_showWeek)
     {
@@ -650,7 +660,7 @@ QStringList DatetimeWidget::dateString()
     QMap<QVariant, QVariant> dd = lunar.solar2lunar(current.date().year(), current.date().month(), current.date().day(), current.time().hour());
 
     QStringList tips;
-    tips.append(QString("天地：%1年 %2月 %3日 %4时").arg(dd.value("gzYear").toString(), dd.value("gzMonth").toString(), dd.value("gzDay").toString(), dd.value("gzHour").toString()));
+    tips.append(QString("干支：%1年 %2月 %3日 %4时").arg(dd.value("gzYear").toString(), dd.value("gzMonth").toString(), dd.value("gzDay").toString(), dd.value("gzHour").toString()));
     tips.append(QString("农历：%1年%2%3 %4 %5").arg(dd.value("lYear").toString(), dd.value("ImonthCn").toString(), dd.value("IdayCn").toString(), dd.value("animal").toString(), dd.value("Term").toString()));
 
     tips.append("阳历：" + current.date().toString(Qt::SystemLocaleLongDate));

@@ -30,6 +30,7 @@
 
 #define PLUGIN_STATE_KEY "enable"
 #define TIME_FORMAT_KEY "Use24HourFormat"
+#define SECOND_SHOW_KEY "showSecond"
 #define DATE_SHOW_KEY "showDate"
 #define WEEK_SHOW_KEY "showWeek"
 #define LUNAR_SHOW_KEY "showLunar"
@@ -79,6 +80,7 @@ void DatetimePlugin::loadPlugin()
     m_centralWidget = new DatetimeWidget;
     m_centralWidget->setShowDate(m_proxyInter->getValue(this, DATE_SHOW_KEY, true).toBool());
     m_centralWidget->setShowLunar(m_proxyInter->getValue(this, LUNAR_SHOW_KEY, true).toBool());
+    m_centralWidget->setShowSecond(m_proxyInter->getValue(this, SECOND_SHOW_KEY, false).toBool());
 
     connect(m_centralWidget, &DatetimeWidget::requestUpdateGeometry, [this] { m_proxyInter->itemUpdate(this, pluginName()); });
     connect(m_refershTimer, &QTimer::timeout, this, &DatetimePlugin::updateCurrentTimeString);
@@ -149,6 +151,12 @@ const QString DatetimePlugin::itemContextMenu(const QString &itemKey)
     settings["isActive"] = true;
     items.push_back(settings);
 
+    QMap<QString, QVariant> showSecond;
+    showSecond["itemId"] = "showSecond";
+    showSecond["itemText"] = m_centralWidget->isShowSecond() ? "隐藏秒" : "显示秒";
+    showSecond["isActive"] = true;
+    items.push_front(showSecond);
+
     QMap<QString, QVariant> showDate;
     showDate["itemId"] = "showDate";
     showDate["itemText"] = m_centralWidget->isShowDate() ? "隐藏日期" : "显示日期";
@@ -163,7 +171,7 @@ const QString DatetimePlugin::itemContextMenu(const QString &itemKey)
 
     QMap<QString, QVariant> showLunar;
     showLunar["itemId"] = "showLunar";
-    showLunar["itemText"] = m_centralWidget->isShowLunar() ? "隐藏六十甲子" : "显示六十甲子";
+    showLunar["itemText"] = m_centralWidget->isShowLunar() ? "隐藏干支" : "显示干支";
     showLunar["isActive"] = true;
     items.push_back(showLunar);
 
@@ -211,6 +219,11 @@ void DatetimePlugin::invokedMenuItem(const QString &itemKey, const QString &menu
         m_centralWidget->setShowLunar(!m_centralWidget->isShowLunar());
         m_proxyInter->saveValue(this, LUNAR_SHOW_KEY, m_centralWidget->isShowLunar());
     }
+    else if(menuId == "showSecond")
+    {
+        m_centralWidget->setShowSecond(!m_centralWidget->isShowSecond());
+        m_proxyInter->saveValue(this, SECOND_SHOW_KEY, m_centralWidget->isShowSecond());
+    }
     else
     {
         const bool value = is24HourFormat();
@@ -250,19 +263,13 @@ void DatetimePlugin::updateCurrentTimeString()
 	    foreach(QString s, tips)
 		    t.append(s);
 
-	    if (m_centralWidget->is24HourFormat())
-	    {
-		    t.append("时间：" + currentDateTime.toString("HH:mm:ss"));
-	    }
-	    else
-	    {
-		    t.append("时间：" + currentDateTime.toString("hh:mm:ss A"));
-	    }
+        t.append("时间：" + QLocale::system().toString(currentDateTime.time(), QLocale::LongFormat));
+
 	    m_dateTipsLabel->setTextList(t);
     }
     const int min = currentDateTime.time().minute();
 
-    if (min == minute)
+    if (min == minute && !m_centralWidget->isShowSecond())
         return;
 
     minute = min;

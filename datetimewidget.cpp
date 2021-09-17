@@ -371,7 +371,7 @@ private:
         QDate epochDate(1900, 1, 31);
 
         auto i=0, temp=0;
-        auto offset = (QDateTime(objDate).toMSecsSinceEpoch() - QDateTime(epochDate).toMSecsSinceEpoch())/86400000;
+        auto offset = (QDateTime(objDate, QTime(0, 0, 0)).toMSecsSinceEpoch() - QDateTime(epochDate, QTime(0, 0, 0)).toMSecsSinceEpoch())/86400000;
         for(i=1900; i<2101 && offset>0; )
         {
             temp = lYearDays(i);
@@ -454,7 +454,7 @@ private:
             Term    = 节气[m*2-1];
         }
         //日柱 当月一日与 1900/1/1 相差天数
-        int dayCyclical = QDateTime(QDate(y, m - 1, 1)).toMSecsSinceEpoch()/86400000+25567+10;
+        int dayCyclical = QDateTime(QDate(y, m - 1, 1), QTime(0, 0, 0)).toMSecsSinceEpoch()/86400000+25567+10;
 
         a.insert("lYear", year + 221);
         a.insert("lMonth", month);
@@ -530,7 +530,7 @@ private:
             offset+=day;
         }
         //1900年农历正月一日的公历时间为1900年1月30日0时0分0秒(该时间也是本农历的最开始起始点)
-        auto stmap   =   QDateTime(QDate(1900,1,30)).toMSecsSinceEpoch();
+        auto stmap   =   QDateTime(QDate(1900,1,30), QTime(0, 0, 0)).toMSecsSinceEpoch();
         auto calObj  =   QDateTime::fromMSecsSinceEpoch((offset+d-31)*86400000+stmap);
         auto cY      =   calObj.date().year();
         auto cM      =   calObj.date().month()+1;
@@ -547,6 +547,7 @@ DatetimeWidget::DatetimeWidget(QWidget *parent)
 {
     setMinimumSize(PLUGIN_BACKGROUND_MIN_SIZE, PLUGIN_BACKGROUND_MIN_SIZE);
     m_timeFont = TIME_FONT;
+    m_timeFont.setPixelSize(15);
 }
 
 void DatetimeWidget::setShowDate(const bool value)
@@ -604,12 +605,10 @@ void DatetimeWidget::setShowWeek(const bool value)
 
 QSize DatetimeWidget::sizeHint() const
 {
-    QLocale tmpLocal = QLocale(QLocale::English, QLocale::UnitedStates);
-
-    QString str = currentChinaTime();
-    while (QFontMetrics(m_timeFont).boundingRect(str).size().height() > PLUGIN_BACKGROUND_MIN_SIZE - 2) {
-        m_timeFont.setPixelSize(m_timeFont.pixelSize() - 1);
-    }
+    // QString str = currentChinaTime();
+    // while (QFontMetrics(m_timeFont).boundingRect(str).size().height() > PLUGIN_BACKGROUND_MIN_SIZE - 2) {
+        // m_timeFont.setPixelSize(m_timeFont.pixelSize() - 1);
+    // }
 
     return QSize(QFontMetrics(m_timeFont).boundingRect(QRect(0,0,0,0), Qt::AlignLeft, currentChinaTime()).size().width() + 2, height());
 }
@@ -635,10 +634,12 @@ QString DatetimeWidget::currentChinaTime() const
 
     if (m_showDate)
     {
-        date.append(QLocale::system().toString(current.date(), QLocale::ShortFormat));
+        // date.append(QLocale::system().toString(current.date(), QLocale::ShortFormat));
+        date.append(current.date().toString("yyyy-M-d"));
     }
 
-    date.append(QLocale::system().toString(current.time(), m_showSecond ? QLocale::LongFormat : QLocale::ShortFormat));
+    // date.append(QLocale::system().toString(current.time(), m_showSecond ? QLocale::LongFormat : QLocale::ShortFormat));
+    date.append(current.time().toString(QString().append(m_24HourFormat ? "H" : "AP h").append(":m").append(m_showSecond ? ":s" : "")));
 
     if(m_showWeek)
     {

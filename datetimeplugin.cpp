@@ -263,7 +263,8 @@ void DatetimePlugin::updateCurrentTimeString()
 	    foreach(QString s, tips)
 		    t.append(s);
 
-        t.append("时间：" + QLocale::system().toString(currentDateTime.time(), QLocale::LongFormat));
+        // t.append("时间：" + QLocale::system().toString(currentDateTime.time(), QLocale::LongFormat));
+        t.append("时间：" + currentDateTime.time().toString("HH:mm:ss"));
 
 	    m_dateTipsLabel->setTextList(t);
     }

@@ -635,11 +635,11 @@ QString DatetimeWidget::currentChinaTime() const
     if (m_showDate)
     {
         // date.append(QLocale::system().toString(current.date(), QLocale::ShortFormat));
-        date.append(current.date().toString("yyyy-M-d"));
+        date.append(current.date().toString("yyyy-MM-dd"));
     }
 
     // date.append(QLocale::system().toString(current.time(), m_showSecond ? QLocale::LongFormat : QLocale::ShortFormat));
-    date.append(current.time().toString(QString().append(m_24HourFormat ? "H" : "AP h").append(":m").append(m_showSecond ? ":s" : "")));
+    date.append(current.time().toString(QString().append(m_24HourFormat ? "HH" : "AP hh").append(":mm").append(m_showSecond ? ":ss" : "")));
 
     if(m_showWeek)
     {

@@ -50,7 +50,7 @@ const QString DatetimePlugin::pluginName() const
 
 const QString DatetimePlugin::pluginDisplayName() const
 {
-    return "时间";
+    return "定制时间";
 }
 
 void DatetimePlugin::init(PluginProxyInterface *proxyInter)
@@ -72,7 +72,6 @@ void DatetimePlugin::loadPlugin()
     m_pluginLoaded = true;
     m_dateTipsLabel = new TipsWidget;
     m_refershTimer = new QTimer(this);
-    m_dateTipsLabel->setObjectName("datetime");
 
     m_refershTimer->setInterval(1000);
     m_refershTimer->start();
@@ -81,6 +80,7 @@ void DatetimePlugin::loadPlugin()
     m_centralWidget->setShowDate(m_proxyInter->getValue(this, DATE_SHOW_KEY, true).toBool());
     m_centralWidget->setShowLunar(m_proxyInter->getValue(this, LUNAR_SHOW_KEY, true).toBool());
     m_centralWidget->setShowSecond(m_proxyInter->getValue(this, SECOND_SHOW_KEY, false).toBool());
+    m_centralWidget->setShowWeek(m_proxyInter->getValue(this, WEEK_SHOW_KEY, false).toBool());
 
     connect(m_centralWidget, &DatetimeWidget::requestUpdateGeometry, [this] { m_proxyInter->itemUpdate(this, pluginName()); });
     connect(m_refershTimer, &QTimer::timeout, this, &DatetimePlugin::updateCurrentTimeString);

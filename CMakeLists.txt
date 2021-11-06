@@ -3,6 +3,12 @@ set(PLUGIN_NAME "datetime")
 
 project(${PLUGIN_NAME})
 
+set(CMAKE_AUTOMOC ON)
+# 启用 qrc 资源文件的支持
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # Sources files
 file(GLOB SRCS "*.h" "*.cpp" "../../widgets/tipswidget.h" "../../widgets/tipswidget.cpp")
 

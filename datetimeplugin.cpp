@@ -71,6 +71,7 @@ void DatetimePlugin::loadPlugin()
 
     m_pluginLoaded = true;
     m_dateTipsLabel = new TipsWidget;
+    m_weekWidget = new WeekWidget;
     m_refershTimer = new QTimer(this);
 
     m_refershTimer->setInterval(1000);
@@ -128,11 +129,18 @@ QWidget *DatetimePlugin::itemTipsWidget(const QString &itemKey)
     return m_dateTipsLabel;
 }
 
+QWidget *DatetimePlugin::itemPopupApplet(const QString &itemKey)
+{
+    Q_UNUSED(itemKey);
+    m_weekWidget->updateTime();
+    return m_weekWidget;
+}
+
 const QString DatetimePlugin::itemCommand(const QString &itemKey)
 {
     Q_UNUSED(itemKey);
 
-    return "dbus-send --print-reply --dest=com.deepin.Calendar /com/deepin/Calendar com.deepin.Calendar.RaiseWindow";
+    return nullptr; //"dbus-send --print-reply --dest=com.deepin.Calendar /com/deepin/Calendar com.deepin.Calendar.RaiseWindow";
 }
 
 const QString DatetimePlugin::itemContextMenu(const QString &itemKey)
@@ -211,8 +219,8 @@ void DatetimePlugin::invokedMenuItem(const QString &itemKey, const QString &menu
     }
     else if (menuId == "showWeek")
     {
-	m_centralWidget->setShowWeek(!m_centralWidget->isShowWeek());
-	m_proxyInter->saveValue(this, WEEK_SHOW_KEY, m_centralWidget->isShowWeek());
+	    m_centralWidget->setShowWeek(!m_centralWidget->isShowWeek());
+	    m_proxyInter->saveValue(this, WEEK_SHOW_KEY, m_centralWidget->isShowWeek());
     }
     else if (menuId == "showLunar")
     {

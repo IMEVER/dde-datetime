@@ -26,6 +26,7 @@
 #include "../../interfaces/pluginsiteminterface.h"
 #include "datetimewidget.h"
 #include "../../widgets/tipswidget.h"
+#include "weekwidget.h"
 
 #include <QTimer>
 #include <QLabel>
@@ -55,6 +56,7 @@ public:
 
     QWidget *itemWidget(const QString &itemKey) override;
     QWidget *itemTipsWidget(const QString &itemKey) override;
+    QWidget *itemPopupApplet(const QString &itemKey) override;
 
     const QString itemCommand(const QString &itemKey) override;
     const QString itemContextMenu(const QString &itemKey) override;
@@ -78,6 +80,7 @@ private:
     QPointer<TipsWidget> m_dateTipsLabel;
     QTimer *m_refershTimer;
     QStringList tips;
+    WeekWidget *m_weekWidget;
     int hour;
     int minute;
 

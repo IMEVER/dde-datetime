@@ -1,24 +1,3 @@
-/*
- * Copyright (C) 2011 ~ 2018 Deepin Technology Co., Ltd.
- *
- * Author:     sbw <sbw@sbw.so>
- *
- * Maintainer: sbw <sbw@sbw.so>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 #ifndef DATETIMEPLUGIN_H
 #define DATETIMEPLUGIN_H
 
@@ -26,12 +5,49 @@
 #include "../../interfaces/pluginsiteminterface.h"
 #include "datetimewidget.h"
 #include "../../widgets/tipswidget.h"
-#include "weekwidget.h"
+
 
 #include <QTimer>
 #include <QLabel>
 #include <QSettings>
 
+class WeekWidget;
+
+class Holiday {
+    public:
+        enum DayType {
+            Normal, Work, Rest
+        };
+
+        Holiday(QDate start, QDate end, QList<QDate> workdays = QList<QDate>())
+        {
+            this->m_start = start;
+            this->m_end = end;
+            this->m_workdays = workdays;
+        }
+
+        Holiday(QDate start) { Holiday(start, start); }
+
+        DayType getDayType(QDate date)
+        {
+            if(m_start.dayOfYear() <= date.dayOfYear() && date.dayOfYear() <= m_end.dayOfYear())
+                return Rest;
+            else if(m_workdays.contains(date))
+                return Work;
+            else
+                return Normal;
+        }
+
+        QString toString() const
+        {
+            return QString("%1,%2").arg(m_start.toString("yyyy-MM-dd")).arg(m_end.toString("yyyy-MM-dd"));
+        }
+
+    private:
+        QDate m_start;
+        QDate m_end;
+        QList<QDate> m_workdays;
+};
 class DatetimePlugin : public QObject, PluginsItemInterface
 {
     Q_OBJECT
@@ -64,6 +80,7 @@ public:
     void invokedMenuItem(const QString &itemKey, const QString &menuId, const bool checked) override;
 
     void pluginSettingsChanged() override;
+    QList<Holiday> getHolidays(int year);
 
 private slots:
     void updateCurrentTimeString();
@@ -85,6 +102,7 @@ private:
     int minute;
 
     bool m_pluginLoaded;
+    QSettings *m_settings;
 };
 
 #endif // DATETIMEPLUGIN_H

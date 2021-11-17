@@ -20,6 +20,7 @@
  */
 
 #include "datetimeplugin.h"
+#include "weekwidget.h"
 
 #include <DDBusSender>
 #include <QLabel>
@@ -39,8 +40,7 @@ DatetimePlugin::DatetimePlugin(QObject *parent)
     : QObject(parent)
     , m_pluginLoaded(false)
 {
-    QDBusConnection sessionBus = QDBusConnection::sessionBus();
-    sessionBus.connect("com.deepin.daemon.Timedate", "/com/deepin/daemon/Timedate", "org.freedesktop.DBus.Properties",  "PropertiesChanged", this, SLOT(propertiesChanged()));
+
 }
 
 const QString DatetimePlugin::pluginName() const
@@ -69,19 +69,23 @@ void DatetimePlugin::loadPlugin()
     if (m_pluginLoaded)
         return;
 
+    QDBusConnection::sessionBus().connect("com.deepin.daemon.Timedate", "/com/deepin/daemon/Timedate", "org.freedesktop.DBus.Properties",  "PropertiesChanged", this, SLOT(propertiesChanged()));
+    m_settings = new QSettings(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/dde-datetime.ini", QSettings::IniFormat);
+    m_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
+
     m_pluginLoaded = true;
     m_dateTipsLabel = new TipsWidget;
-    m_weekWidget = new WeekWidget;
+    m_weekWidget = new WeekWidget(this);
     m_refershTimer = new QTimer(this);
 
     m_refershTimer->setInterval(1000);
     m_refershTimer->start();
 
-    m_centralWidget = new DatetimeWidget;
-    m_centralWidget->setShowDate(m_proxyInter->getValue(this, DATE_SHOW_KEY, true).toBool());
-    m_centralWidget->setShowLunar(m_proxyInter->getValue(this, LUNAR_SHOW_KEY, true).toBool());
-    m_centralWidget->setShowSecond(m_proxyInter->getValue(this, SECOND_SHOW_KEY, false).toBool());
-    m_centralWidget->setShowWeek(m_proxyInter->getValue(this, WEEK_SHOW_KEY, false).toBool());
+    m_centralWidget = new DatetimeWidget();
+    m_centralWidget->setShowDate(m_settings->value(DATE_SHOW_KEY, true).toBool());
+    m_centralWidget->setShowLunar(m_settings->value(LUNAR_SHOW_KEY, true).toBool());
+    m_centralWidget->setShowSecond(m_settings->value(SECOND_SHOW_KEY, false).toBool());
+    m_centralWidget->setShowWeek(m_settings->value(WEEK_SHOW_KEY, false).toBool());
 
     connect(m_centralWidget, &DatetimeWidget::requestUpdateGeometry, [this] { m_proxyInter->itemUpdate(this, pluginName()); });
     connect(m_refershTimer, &QTimer::timeout, this, &DatetimePlugin::updateCurrentTimeString);
@@ -132,7 +136,8 @@ QWidget *DatetimePlugin::itemTipsWidget(const QString &itemKey)
 QWidget *DatetimePlugin::itemPopupApplet(const QString &itemKey)
 {
     Q_UNUSED(itemKey);
-    m_weekWidget->updateTime();
+    if(!m_weekWidget->isVisible())
+        m_weekWidget->updateTime();
     return m_weekWidget;
 }
 
@@ -215,22 +220,22 @@ void DatetimePlugin::invokedMenuItem(const QString &itemKey, const QString &menu
     else if (menuId == "showDate")
     {
         m_centralWidget->setShowDate(!m_centralWidget->isShowDate());
-        m_proxyInter->saveValue(this, DATE_SHOW_KEY, m_centralWidget->isShowDate());
+        m_settings->setValue(DATE_SHOW_KEY, m_centralWidget->isShowDate());
     }
     else if (menuId == "showWeek")
     {
 	    m_centralWidget->setShowWeek(!m_centralWidget->isShowWeek());
-	    m_proxyInter->saveValue(this, WEEK_SHOW_KEY, m_centralWidget->isShowWeek());
+	    m_settings->setValue(WEEK_SHOW_KEY, m_centralWidget->isShowWeek());
     }
     else if (menuId == "showLunar")
     {
         m_centralWidget->setShowLunar(!m_centralWidget->isShowLunar());
-        m_proxyInter->saveValue(this, LUNAR_SHOW_KEY, m_centralWidget->isShowLunar());
+        m_settings->setValue(LUNAR_SHOW_KEY, m_centralWidget->isShowLunar());
     }
     else if(menuId == "showSecond")
     {
         m_centralWidget->setShowSecond(!m_centralWidget->isShowSecond());
-        m_proxyInter->saveValue(this, SECOND_SHOW_KEY, m_centralWidget->isShowSecond());
+        m_settings->setValue(SECOND_SHOW_KEY, m_centralWidget->isShowSecond());
     }
     else
     {
@@ -247,7 +252,6 @@ void DatetimePlugin::pluginSettingsChanged()
 
     const bool value = is24HourFormat();
 
-    m_proxyInter->saveValue(this, TIME_FORMAT_KEY, value);
     m_centralWidget->set24HourFormat(value);
 
     refreshPluginItemsVisible();
@@ -296,6 +300,13 @@ void DatetimePlugin::refreshPluginItemsVisible()
         m_proxyInter->itemAdded(this, pluginName());
     } else {
         m_proxyInter->itemRemoved(this, pluginName());
+        m_pluginLoaded = false;
+        QDBusConnection::sessionBus().disconnect("com.deepin.daemon.Timedate", "/com/deepin/daemon/Timedate", "org.freedesktop.DBus.Properties",  "PropertiesChanged", this, SLOT(propertiesChanged()));
+        m_settings->deleteLater();
+        m_refershTimer->deleteLater();
+        m_dateTipsLabel->deleteLater();
+        m_weekWidget->deleteLater();
+        m_centralWidget->deleteLater();
     }
 }
 
@@ -328,4 +339,33 @@ void DatetimePlugin::save24HourFormat(bool format)
         m_interface->setProperty(TIME_FORMAT_KEY, format);
         m_interface->deleteLater();
     }
+}
+
+QList<Holiday> DatetimePlugin::getHolidays(int year)
+{
+    const QString key = QString::number(year);
+    QList<Holiday> list;
+    // if(allKeys.contains(key))
+    {
+        const int size = m_settings->beginReadArray(key);
+        for(int i=0; i < size; i++)
+        {
+            m_settings->setArrayIndex(i);
+
+            QDate start, end;
+            QList<QDate> works;
+
+            QStringList workDays = m_settings->value("work").toStringList();
+            for(auto day : workDays)
+                works.append(QDate::fromString(QString("%1-%2").arg(year).arg(day), "yyyy-MM-dd"));
+
+            start = QDate::fromString(QString("%1-%2").arg(year).arg(m_settings->value("start").toString()), "yyyy-MM-dd");
+
+            end = QDate::fromString(QString("%1-%2").arg(year).arg(m_settings->value("end").toString()), "yyyy-MM-dd");
+
+            list.append(Holiday(start, end, works));
+        }
+        m_settings->endArray();
+    }
+    return list;
 }

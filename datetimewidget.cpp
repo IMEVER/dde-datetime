@@ -113,7 +113,7 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::Antialiasing);
 
     painter.setFont(m_timeFont);
-    painter.setPen(QPen(palette().brightText(), 1));
+    painter.setPen(QPen(palette().brush(QPalette::BrightText), 1));
 
     painter.drawText(rect(), Qt::AlignVCenter | Qt::AlignLeft, currentChinaTime());
 }

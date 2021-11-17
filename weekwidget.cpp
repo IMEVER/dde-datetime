@@ -1,18 +1,39 @@
 #include "weekwidget.h"
 
 #include "ui_weekwidget.h"
+#include "weekitem.h"
 #include "lunar.h"
 
 #include <QDateTime>
 #include <QFont>
 #include <QColor>
 #include <QProcess>
+#include <QItemDelegate>
 
+class CMarginDelegate : public QItemDelegate
+{
+public:
+    CMarginDelegate(QObject* parent)
+        :   QItemDelegate(parent)
+    {}
 
-WeekWidget::WeekWidget(QWidget *parent) : QWidget(parent),
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    {
+        QStyleOptionViewItem itemOption(option);
+
+        // Make the 'drawing rectangle' smaller.
+        itemOption.rect.adjust(-1, 0, 0, 0);
+        // itemOption.rect.setLeft(0);
+
+        QItemDelegate::paint(painter, itemOption, index);
+    }
+};
+
+WeekWidget::WeekWidget(DatetimePlugin *plugin, QWidget *parent) : QWidget(parent),
+    m_plugin(plugin),
     ui(new Ui::WeekWidget)
 {
-    ui->setupUi(this);
+    ui->setupUi(this);ui->tableWidget->setItemDelegate(new CMarginDelegate(this));
 
     QStringList weeks = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
     ui->tableWidget->setHorizontalHeaderLabels(weeks);
@@ -44,70 +65,52 @@ void WeekWidget::updateTime()
     Lunar lunar;
     QMap<QVariant, QVariant> dd = lunar.solar2lunar(now.date().year(), now.date().month(), now.date().day(), now.time().hour());
 
-    ui->label->setText(QString("始皇：%1年 %2 %3%4 %5时 %6 %7\t公元：").arg(dd.value("lYear").toString(), dd.value("gzYear").toString(), dd.value("ImonthCn").toString(), dd.value("IdayCn").toString(), dd.value("gzHour").toString(), dd.value("animal").toString(), dd.value("Term").toString())
+    ui->label->setText(QString("始皇：%1年 %2 %3%4 %5时 %6 %7\t公元：").arg(dd.value("lYear").toString(), dd.value("gzYear").toString(), dd.value("ImonthCn").toString(), dd.value("IdayCn").toString(), dd.value("gzHour").toString().at(1), dd.value("animal").toString(), dd.value("Term").toString())
         + now.date().toString("yyyy年MM月dd日")
     );
 
     m_showDate = QDate(now.date().year(), now.date().month(), 1);
     showMonth();
+    ui->tableWidget->update();
 }
 
 void WeekWidget::showMonth()
 {
-    int currentDay = QDate::currentDate().day();
-    int currentMonth = QDate::currentDate().month();
-    int row = 0, column = 0, index = 0;
-
     ui->currentLabel->setText(QString("%1月").arg(m_showDate.month()));
-    ui->returnButton->setText(m_showDate.month() == currentMonth ? "今天" : "返回今天");
+    ui->returnButton->setText(m_showDate.month() == QDate::currentDate().month() ? "今天" : "返回今天");
 
-    QDate start = m_showDate.addDays(-m_showDate.dayOfWeek());
+    auto getDayType = [this](QDate day) {
+        if(m_holidays.contains(day.year()) && !m_holidays.value(day.year()).isEmpty())
+        {
+            for(Holiday holiday : m_holidays.value(day.year()))
+            {
+                Holiday::DayType type = holiday.getDayType(day);
+                if(type != Holiday::Normal)
+                    return type;
+            }
+        }
 
-    Lunar lunar;
-    QMap<QVariant, QVariant> dd;
-    while(index < 35)
+        return Holiday::Normal;
+    };
+
+    QDate start = m_showDate.dayOfWeek() == 7 ? m_showDate : m_showDate.addDays(-m_showDate.dayOfWeek());
+    int row = 0, column = 0;
+    while(row < 5 && column < 7)
     {
-        dd = lunar.solar2lunarDay(start.year(), start.month(), start.day());
+        if(!m_holidays.contains(start.year()))
+        {
+            QList<Holiday> holiday = m_plugin->getHolidays(start.year());
+            m_holidays.insert(start.year(), holiday);
+        }
 
-        QTableWidgetItem *item = ui->tableWidget->item(row, column);
+        WeekItem *item = static_cast<WeekItem *>(ui->tableWidget->cellWidget(row, column));
         if(item == nullptr)
         {
-            item = new QTableWidgetItem();
-            ui->tableWidget->setItem(row, column, item);
+            item = new WeekItem(this);
+            ui->tableWidget->setCellWidget(row, column, item);
         }
 
-        item->setText(QString("%1\n%2 %3").arg(QString::number(start.day()), dd.value("Iday") == 1 ? dd.value("ImonthCn").toString() : dd.value("IdayCn").toString(), dd.value("Term").toString()));
-
-        if(start.day() == currentDay && start.month() == currentMonth)
-        {
-            item->setForeground(Qt::blue);
-            item->setBackground(Qt::white);
-            item->setTextAlignment(Qt::AlignRight);
-            QFont font = item->font();
-            font.setPixelSize(18);
-            font.setBold(true);
-            item->setFont(font);
-        }
-        else
-        {
-            QFont font = item->font();
-            font.setPixelSize(14);
-            font.setBold(false);
-            item->setFont(font);
-
-            item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-
-            item->setBackground(QColor("#282828"));
-            if(start.month() != m_showDate.month())
-            {
-                item->setForeground(Qt::darkGray);
-            }
-            else
-            {
-                item->setForeground(Qt::white);
-            }
-        }
-
+        item->updateInfo(start, getDayType(start), start.month() == m_showDate.month());
 
         if(++column > 6)
         {
@@ -115,6 +118,7 @@ void WeekWidget::showMonth()
             row++;
         }
         start = start.addDays(1);
-        index++;
     }
+
+    ui->tableWidget->clearSelection();
 }

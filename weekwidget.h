@@ -1,6 +1,8 @@
 #ifndef WEEKWIDGET_H
 #define WEEKWIDGET_H
 
+#include "datetimeplugin.h"
+
 #include <QWidget>
 #include <QDate>
 
@@ -12,7 +14,7 @@ class WeekWidget : public QWidget
 {
     Q_OBJECT
     public:
-        explicit WeekWidget(QWidget *parent=nullptr);
+        explicit WeekWidget(DatetimePlugin *plugin, QWidget *parent=nullptr);
         ~WeekWidget();
         void updateTime();
 
@@ -20,8 +22,10 @@ class WeekWidget : public QWidget
         void showMonth();
 
     private:
+        DatetimePlugin *m_plugin;
         Ui::WeekWidget *ui;
         QDate m_showDate;
+        QMap<int, QList<Holiday>> m_holidays;
 };
 
 #endif

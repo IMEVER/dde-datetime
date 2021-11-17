@@ -17,6 +17,8 @@ public:
     const  QStringList 日 = {"日","一","二","三","四","五","六","七","八","九","十"};
     const  QStringList 十 = {"初","十","廿","卅"};
     const  QStringList 月 = {"正","二","三","四","五","六","七","八","九","十","冬","腊"};
+
+    const QMap<QString, QString> 节日 = {{"1-1", "春节"}, {"1-15", "元宵"}, {"5-5", "端午"}, {"7-7", "情人节"}, {"9-9", "重阳"}, {"8-15", "中秋"}, {"7-15", "中元"}};
     /**
       * 公历每个月份的天数普通表
       * @Array Of Property
@@ -172,6 +174,13 @@ private:
     {
         if(m>12 || m<1) {return -1;}//月份参数从1至12，参数错误返回-1
         return( (lunarInfo[y-1900] & (0x10000>>m))? 30: 29 );
+    }
+
+    QString getHoliday(const int year, const int month, const int day)
+    {
+        if(month == 12 && day == monthDays(year, month))
+            return "除夕";
+        return 节日.value(QString("%1-%2").arg(month).arg(day));
     }
 
         /**
@@ -423,6 +432,8 @@ private:
             offset += temp;
             --i;
         }
+        if(i == 13)
+            i = 1;
         //农历月
         auto month      = i;
         //农历日
@@ -504,8 +515,8 @@ private:
         }
 
         //农历年
-        auto year = i;
-        auto leap = getLeapMonth(i); //闰哪个月
+        const auto year = i;
+        const auto leap = getLeapMonth(i); //闰哪个月
         auto isLeap = false;
 
         //效验闰月
@@ -544,6 +555,8 @@ private:
             offset += temp;
             --i;
         }
+        if(i == 13)
+            i = 1;
         //农历月
         auto month      = i;
         //农历日
@@ -568,6 +581,7 @@ private:
         a.insert("ImonthCn", (isLeap ? "润": "") + toChinaMonth(month));
         a.insert("IdayCn", toChinaDay(day));
         a.insert("Term", Term);
+        a.insert("Holiday", getHoliday(year, month, day));
         return a;
     }
 

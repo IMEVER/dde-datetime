@@ -112,6 +112,15 @@ void WeekWidget::showMonth()
 
         item->updateInfo(start, getDayType(start), start.month() == m_showDate.month());
 
+        QTableWidgetItem *tmp = ui->tableWidget->item(row, column);
+        if(!tmp)
+        {
+            tmp = new QTableWidgetItem();
+            ui->tableWidget->setItem(row, column, tmp);
+        }
+
+        tmp->setFlags(start.month() == m_showDate.month() ? tmp->flags() | Qt::ItemIsSelectable : tmp->flags() & ~Qt::ItemIsSelectable);
+
         if(++column > 6)
         {
             column = 0;

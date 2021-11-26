@@ -40,16 +40,6 @@ DatetimeWidget::DatetimeWidget(QWidget *parent)
     setMinimumSize(PLUGIN_BACKGROUND_MIN_SIZE, PLUGIN_BACKGROUND_MIN_SIZE);
     m_timeFont = TIME_FONT;
     m_timeFont.setPixelSize(15);
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, &DatetimeWidget::themeChanged);
-    themeChanged(DGuiApplicationHelper::instance()->themeType());
-}
-
-void DatetimeWidget::themeChanged(DGuiApplicationHelper::ColorType type)
-{
-    if(type == DGuiApplicationHelper::LightType)
-        m_color = QColor(0, 0, 0);
-    else
-        m_color = QColor(255, 255, 255);
 }
 
 void DatetimeWidget::setShowDate(const bool value)
@@ -123,8 +113,7 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::Antialiasing);
 
     painter.setFont(m_timeFont);
-    // painter.setPen(QPen(palette().brush(QPalette::BrightText), 1));
-    painter.setPen(QPen(QBrush(m_color), 1));
+    painter.setPen(QPen(palette().brush(QPalette::BrightText), 1));
 
     painter.drawText(rect(), Qt::AlignVCenter | Qt::AlignLeft, currentChinaTime());
 }

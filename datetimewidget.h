@@ -24,7 +24,6 @@
 
 #include <QWidget>
 #include <QColor>
-#include <DGuiApplicationHelper>
 
 class DatetimeWidget : public QWidget
 {
@@ -50,7 +49,6 @@ public slots:
     void setShowDate(const bool value);
     void setShowLunar(const bool value);
     void setShowWeek(const bool value);
-    void themeChanged(Dtk::Gui::DGuiApplicationHelper::ColorType type);
 
 private:
     void paintEvent(QPaintEvent *e);
@@ -65,7 +63,6 @@ private:
     mutable QFont m_timeFont;
     mutable QFont m_dateFont;
     mutable int m_timeOffset;
-    QColor m_color;
 };
 
 #endif // DATETIMEWIDGET_H

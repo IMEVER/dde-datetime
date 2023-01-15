@@ -160,9 +160,15 @@ const QString DatetimePlugin::itemContextMenu(const QString &itemKey)
     edit["isActive"] = true;
     items.append(edit);
 
+    QMap<QString, QVariant> openCalendar;
+    openCalendar["itemId"] = "openCalendar";
+    openCalendar["itemText"] = "打开日历";
+    openCalendar["isActive"] = true;
+    items.append(openCalendar);
+
     QMap<QString, QVariant> open;
     open["itemId"] = "open";
-    open["itemText"] = "时间设置";
+    open["itemText"] = "系统时间设置";
     open["isActive"] = true;
     items.append(open);
 
@@ -187,6 +193,13 @@ void DatetimePlugin::invokedMenuItem(const QString &itemKey, const QString &menu
         .path("/com/deepin/dde/ControlCenter")
         .method(QString("ShowModule"))
         .arg(QString("datetime"))
+        .call();
+    } else if(menuId == "openCalendar") {
+        DDBusSender()
+        .service("com.deepin.Calendar")
+        .interface("com.deepin.Calendar")
+        .path("/com/deepin/Calendar")
+        .method(QString("RaiseWindow"))
         .call();
     }
     else if (menuId == "refresh") {

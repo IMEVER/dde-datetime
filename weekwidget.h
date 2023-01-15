@@ -17,6 +17,7 @@ class WeekWidget : public QWidget
         explicit WeekWidget(DatetimePlugin *plugin, QWidget *parent=nullptr);
         ~WeekWidget();
         void updateTime();
+        void refresh();
 
     private slots:
         void showMonth();

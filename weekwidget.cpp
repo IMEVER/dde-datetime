@@ -74,22 +74,22 @@ void WeekWidget::updateTime()
     ui->tableWidget->update();
 }
 
+void WeekWidget::refresh() {
+    m_holidays.clear();
+}
+
 void WeekWidget::showMonth()
 {
     ui->currentLabel->setText(QString("%1月").arg(m_showDate.month()));
     ui->returnButton->setText(m_showDate.month() == QDate::currentDate().month() ? "今天" : "返回今天");
 
     auto getDayType = [this](QDate day) {
-        if(m_holidays.contains(day.year()) && !m_holidays.value(day.year()).isEmpty())
+        for(Holiday holiday : m_holidays.value(day.year()))
         {
-            for(Holiday holiday : m_holidays.value(day.year()))
-            {
-                Holiday::DayType type = holiday.getDayType(day);
-                if(type != Holiday::Normal)
-                    return type;
-            }
+            Holiday::DayType type = holiday.getDayType(day);
+            if(type != Holiday::Normal)
+                return type;
         }
-
         return Holiday::Normal;
     };
 
@@ -98,10 +98,7 @@ void WeekWidget::showMonth()
     while(row < 5 && column < 7)
     {
         if(!m_holidays.contains(start.year()))
-        {
-            QList<Holiday> holiday = m_plugin->getHolidays(start.year());
-            m_holidays.insert(start.year(), holiday);
-        }
+            m_holidays.insert(start.year(), m_plugin->getHolidays(start.year()));
 
         WeekItem *item = static_cast<WeekItem *>(ui->tableWidget->cellWidget(row, column));
         if(item == nullptr)

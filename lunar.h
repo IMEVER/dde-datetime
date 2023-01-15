@@ -4,7 +4,6 @@
 #include <QStringList>
 #include <QVariant>
 #include <QDate>
-
 #include <math.h>
 
 class Lunar
@@ -363,10 +362,63 @@ private:
       * @return JSON object
       * @eg:console.log(calendar.solar2lunar(1987,11,01));
       */
-    QMap<QVariant, QVariant> solar2lunar (const int y, const int m, const int d, const int hour=0)
+    QString solar2Ganzhi (QDate objDate)
+    {
+        static QString preDate;
+        static QString ret;
+
+        if(!preDate.isEmpty() && !ret.isEmpty() && preDate == objDate.toString("yyyy-MM-dd"))
+            return ret;
+
+        preDate = objDate.toString("yyyy-MM-dd");
+
+        QDate epochDate(1900, 1, 31);
+
+        auto i=0, temp=0;
+        auto offset = (QDateTime(objDate, QTime(0, 0, 0)).toMSecsSinceEpoch() - QDateTime(epochDate, QTime(0, 0, 0)).toMSecsSinceEpoch())/86400000;
+        for(i=1900; i<2101 && offset>0; )
+        {
+            temp = lYearDays(i);
+            if(offset > temp)
+            {
+                offset -= temp;
+                i++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        ret = toGanZhiYear(i + 221);
+
+        return ret;
+    }
+
+    /**
+      * 传入阳历年月日获得详细的公历、农历object信息 <=>JSON
+      * @param y  solar year
+      * @param m  solar month
+      * @param d  solar day
+      * @return JSON object
+      * @eg:console.log(calendar.solar2lunar(1987,11,01));
+      */
+    QMap<QVariant, QVariant> solar2lunar (const short y, const short m, const short d, const short hour=0)
     {
          //参数区间1900.1.31~2100.12.31
-        QMap<QVariant, QVariant> a;
+
+        static QString preDate;
+        static QMap<QVariant, QVariant> a;
+
+        const QString currentDate = QString("%1-%2-%3").arg(y, 4, 10, QChar('0')).arg(m, 2, 10, QChar('0')).arg(d, 2, 10, QChar('0'));
+        if(!preDate.isEmpty() && !a.isEmpty() && preDate == currentDate) {
+            int dayCyclical = QDateTime(QDate(y, m, d), QTime(0, 0, 0)).toMSecsSinceEpoch()/86400000+25567+11;
+            a.insert("gzHour", toGanZhiHour(dayCyclical, hour));
+            return a;
+        }
+
+        preDate = currentDate;
+        a.clear();
 
         QDate objDate(y, m, d);
         QDate epochDate(1900, 1, 31);
@@ -478,6 +530,7 @@ private:
         a.insert("ncWeek", "星期"+cWeek);
         a.insert("isTerm", isTerm);
         a.insert("Term", Term);
+
         return a;
     }
 

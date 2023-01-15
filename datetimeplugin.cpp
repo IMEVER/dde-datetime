@@ -22,19 +22,15 @@
 #include "datetimeplugin.h"
 #include "weekwidget.h"
 
-#include <DDBusSender>
 #include <QLabel>
 #include <QDebug>
-#include <QDBusConnectionInterface>
-
 #include <unistd.h>
+#include <QDesktopServices>
+#include <DDBusSender>
 
 #define PLUGIN_STATE_KEY "enable"
-#define TIME_FORMAT_KEY "Use24HourFormat"
-#define SECOND_SHOW_KEY "showSecond"
-#define DATE_SHOW_KEY "showDate"
-#define WEEK_SHOW_KEY "showWeek"
-#define LUNAR_SHOW_KEY "showLunar"
+
+static const QString confFile = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/dde-datetime.ini";
 
 DatetimePlugin::DatetimePlugin(QObject *parent)
     : QObject(parent)
@@ -69,9 +65,8 @@ void DatetimePlugin::loadPlugin()
     if (m_pluginLoaded)
         return;
 
-    QDBusConnection::sessionBus().connect("com.deepin.daemon.Timedate", "/com/deepin/daemon/Timedate", "org.freedesktop.DBus.Properties",  "PropertiesChanged", this, SLOT(propertiesChanged()));
-    m_settings = new QSettings(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/dde-datetime.ini", QSettings::IniFormat);
-    m_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
+    QSettings m_settings(confFile, QSettings::IniFormat);
+    m_settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
 
     m_pluginLoaded = true;
     m_dateTipsLabel = new TipsWidget;
@@ -82,10 +77,8 @@ void DatetimePlugin::loadPlugin()
     m_refershTimer->start();
 
     m_centralWidget = new DatetimeWidget();
-    m_centralWidget->setShowDate(m_settings->value(DATE_SHOW_KEY, true).toBool());
-    m_centralWidget->setShowLunar(m_settings->value(LUNAR_SHOW_KEY, true).toBool());
-    m_centralWidget->setShowSecond(m_settings->value(SECOND_SHOW_KEY, false).toBool());
-    m_centralWidget->setShowWeek(m_settings->value(WEEK_SHOW_KEY, false).toBool());
+    m_centralWidget->setFormat(m_settings.value("format", "yyyy/MM/dd HH:mm").toString());
+    m_showSecond = m_settings.value("format", "yyyy/MM/dd HH:mm").toString().contains('s', Qt::CaseSensitive);
 
     connect(m_centralWidget, &DatetimeWidget::requestUpdateGeometry, [this] { m_proxyInter->itemUpdate(this, pluginName()); });
     connect(m_refershTimer, &QTimer::timeout, this, &DatetimePlugin::updateCurrentTimeString);
@@ -153,46 +146,25 @@ const QString DatetimePlugin::itemContextMenu(const QString &itemKey)
     Q_UNUSED(itemKey);
 
     QList<QVariant> items;
-    items.reserve(1);
+    items.reserve(2);
 
-    QMap<QString, QVariant> settings;
-    settings["itemId"] = "settings";
-    if (m_centralWidget->is24HourFormat())
-        settings["itemText"] = "12小时制";
-    else
-        settings["itemText"] = "24小时制";
-    settings["isActive"] = true;
-    items.push_back(settings);
+    QMap<QString, QVariant> refresh;
+    refresh["itemId"] = "refresh";
+    refresh["itemText"] = "刷新";
+    refresh["isActive"] = true;
+    items.append(refresh);
 
-    QMap<QString, QVariant> showSecond;
-    showSecond["itemId"] = "showSecond";
-    showSecond["itemText"] = m_centralWidget->isShowSecond() ? "隐藏秒" : "显示秒";
-    showSecond["isActive"] = true;
-    items.push_front(showSecond);
-
-    QMap<QString, QVariant> showDate;
-    showDate["itemId"] = "showDate";
-    showDate["itemText"] = m_centralWidget->isShowDate() ? "隐藏日期" : "显示日期";
-    showDate["isActive"] = true;
-    items.push_back(showDate);
-
-    QMap<QString, QVariant> showWeek;
-    showWeek["itemId"] = "showWeek";
-    showWeek["itemText"] = m_centralWidget->isShowWeek() ? "隐藏星期" : "显示星期";
-    showWeek["isActive"] = true;
-    items.push_back(showWeek);
-
-    QMap<QString, QVariant> showLunar;
-    showLunar["itemId"] = "showLunar";
-    showLunar["itemText"] = m_centralWidget->isShowLunar() ? "隐藏干支" : "显示干支";
-    showLunar["isActive"] = true;
-    items.push_back(showLunar);
+    QMap<QString, QVariant> edit;
+    edit["itemId"] = "edit";
+    edit["itemText"] = "编辑";
+    edit["isActive"] = true;
+    items.append(edit);
 
     QMap<QString, QVariant> open;
     open["itemId"] = "open";
     open["itemText"] = "时间设置";
     open["isActive"] = true;
-    items.push_back(open);
+    items.append(open);
 
     QMap<QString, QVariant> menu;
     menu["items"] = items;
@@ -217,44 +189,22 @@ void DatetimePlugin::invokedMenuItem(const QString &itemKey, const QString &menu
         .arg(QString("datetime"))
         .call();
     }
-    else if (menuId == "showDate")
-    {
-        m_centralWidget->setShowDate(!m_centralWidget->isShowDate());
-        m_settings->setValue(DATE_SHOW_KEY, m_centralWidget->isShowDate());
-    }
-    else if (menuId == "showWeek")
-    {
-	    m_centralWidget->setShowWeek(!m_centralWidget->isShowWeek());
-	    m_settings->setValue(WEEK_SHOW_KEY, m_centralWidget->isShowWeek());
-    }
-    else if (menuId == "showLunar")
-    {
-        m_centralWidget->setShowLunar(!m_centralWidget->isShowLunar());
-        m_settings->setValue(LUNAR_SHOW_KEY, m_centralWidget->isShowLunar());
-    }
-    else if(menuId == "showSecond")
-    {
-        m_centralWidget->setShowSecond(!m_centralWidget->isShowSecond());
-        m_settings->setValue(SECOND_SHOW_KEY, m_centralWidget->isShowSecond());
-    }
-    else
-    {
-        const bool value = is24HourFormat();
-        save24HourFormat(!value);
-        m_centralWidget->set24HourFormat(!value);
+    else if (menuId == "refresh") {
+        QSettings m_settings(confFile, QSettings::IniFormat);
+        m_settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
+        QString format = m_settings.value("format", "yyyy/MM/dd HH:mm").toString();
+        m_centralWidget->setFormat(format);
+        m_weekWidget->refresh();
+        m_showSecond = format.contains('s', Qt::CaseSensitive);
+    } else if(menuId == "edit") {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(confFile));
     }
 }
 
 void DatetimePlugin::pluginSettingsChanged()
 {
-    if (!m_pluginLoaded)
-        return;
-
-    const bool value = is24HourFormat();
-
-    m_centralWidget->set24HourFormat(value);
-
-    refreshPluginItemsVisible();
+    if (m_pluginLoaded)
+        refreshPluginItemsVisible();
 }
 
 void DatetimePlugin::updateCurrentTimeString()
@@ -282,7 +232,7 @@ void DatetimePlugin::updateCurrentTimeString()
     }
     const int min = currentDateTime.time().minute();
 
-    if (min == minute && !m_centralWidget->isShowSecond())
+    if (min == minute && !m_showSecond)
         return;
 
     minute = min;
@@ -301,8 +251,6 @@ void DatetimePlugin::refreshPluginItemsVisible()
     } else {
         m_proxyInter->itemRemoved(this, pluginName());
         m_pluginLoaded = false;
-        QDBusConnection::sessionBus().disconnect("com.deepin.daemon.Timedate", "/com/deepin/daemon/Timedate", "org.freedesktop.DBus.Properties",  "PropertiesChanged", this, SLOT(propertiesChanged()));
-        m_settings->deleteLater();
         m_refershTimer->deleteLater();
         m_dateTipsLabel->deleteLater();
         m_weekWidget->deleteLater();
@@ -310,62 +258,35 @@ void DatetimePlugin::refreshPluginItemsVisible()
     }
 }
 
-void DatetimePlugin::propertiesChanged()
-{
-    pluginSettingsChanged();
-}
-
-bool DatetimePlugin::is24HourFormat()
-{
-    QDBusInterface *m_interface;
-        if (QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.daemon.Timedate")) {
-            m_interface = new QDBusInterface("com.deepin.daemon.Timedate", "/com/deepin/daemon/Timedate", "com.deepin.daemon.Timedate");
-        } else {
-            QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(QString::number(getuid()));
-            m_interface = new QDBusInterface("com.deepin.daemon.Accounts", path, "com.deepin.daemon.Accounts.User",
-                                      QDBusConnection::systemBus(), this);
-        }
-
-    bool format = m_interface->property(TIME_FORMAT_KEY).toBool();
-
-    m_interface->deleteLater();
-    return format;
-}
-
-void DatetimePlugin::save24HourFormat(bool format)
-{
-    if (QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.daemon.Timedate")) {
-        QDBusInterface *m_interface = new QDBusInterface("com.deepin.daemon.Timedate", "/com/deepin/daemon/Timedate", "com.deepin.daemon.Timedate");
-        m_interface->setProperty(TIME_FORMAT_KEY, format);
-        m_interface->deleteLater();
-    }
-}
-
 QList<Holiday> DatetimePlugin::getHolidays(int year)
 {
+    QSettings m_settings(confFile, QSettings::IniFormat);
+    m_settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
+
     const QString key = QString::number(year);
     QList<Holiday> list;
-    // if(allKeys.contains(key))
-    {
-        const int size = m_settings->beginReadArray(key);
-        for(int i=0; i < size; i++)
-        {
-            m_settings->setArrayIndex(i);
 
+    const int size = m_settings.beginReadArray(key);
+    for(int i=0; i < size; i++)
+    {
+        m_settings.setArrayIndex(i);
+        QStringList days = m_settings.value("day").toString().split('|', Qt::SkipEmptyParts);
+        if(days.count() > 0) {
             QDate start, end;
             QList<QDate> works;
 
-            QStringList workDays = m_settings->value("work").toStringList();
-            for(auto day : workDays)
-                works.append(QDate::fromString(QString("%1-%2").arg(year).arg(day), "yyyy-MM-dd"));
+            QStringList rests = days.first().trimmed().split('~', Qt::SkipEmptyParts);
+            start = QDate::fromString(QString("%1-%2").arg(year).arg(rests.first().trimmed()), "yyyy-MM-dd");
+            end = rests.count() > 1 ? QDate::fromString(QString("%1-%2").arg(year).arg(rests.last().trimmed()), "yyyy-MM-dd") : start;
 
-            start = QDate::fromString(QString("%1-%2").arg(year).arg(m_settings->value("start").toString()), "yyyy-MM-dd");
-
-            end = QDate::fromString(QString("%1-%2").arg(year).arg(m_settings->value("end").toString()), "yyyy-MM-dd");
+            if(days.count() > 1)
+            for(auto day : days.last().trimmed().split('~', Qt::SkipEmptyParts))
+                works.append(QDate::fromString(QString("%1-%2").arg(year).arg(day.trimmed()), "yyyy-MM-dd"));
 
             list.append(Holiday(start, end, works));
         }
-        m_settings->endArray();
     }
+    m_settings.endArray();
+
     return list;
 }

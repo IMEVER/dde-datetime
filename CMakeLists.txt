@@ -10,7 +10,12 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Sources files
-file(GLOB SRCS "*.h" "*.cpp" "../../widgets/tipswidget.h" "../../widgets/tipswidget.cpp")
+set(SRCS "datetimeplugin.cpp"
+    "datetimewidget.cpp"
+    "weekitem.cpp"
+    "weekwidget.cpp"
+    "weekwidget.ui"
+    "../../widgets/tipswidget.cpp")
 
 find_package(PkgConfig REQUIRED)
 find_package(Qt5Widgets REQUIRED)
@@ -26,7 +31,6 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../)
 
 target_include_directories(${PLUGIN_NAME} PUBLIC
     ${DtkWidget_INCLUDE_DIRS}
-    # ../../interfaces
     ${DdeDockInterface_INCLUDE_DIRS}
   )
 

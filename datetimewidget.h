@@ -32,11 +32,6 @@ class DatetimeWidget : public QWidget
 public:
     explicit DatetimeWidget(QWidget *parent = 0);
 
-    bool is24HourFormat() const { return m_24HourFormat; }
-    bool isShowSecond() const { return m_showSecond; }
-    bool isShowDate() const { return m_showDate; }
-    bool isShowLunar() const { return m_showLunar; }
-    bool isShowWeek() const { return m_showWeek; }
     QSize sizeHint() const;
     QStringList dateString();
 
@@ -44,25 +39,15 @@ signals:
     void requestUpdateGeometry() const;
 
 public slots:
-    void set24HourFormat(const bool value);
-    void setShowSecond(const bool value);
-    void setShowDate(const bool value);
-    void setShowLunar(const bool value);
-    void setShowWeek(const bool value);
+    void setFormat(QString format);
 
 private:
     void paintEvent(QPaintEvent *e);
     QString currentChinaTime() const;
 
 private:
-    bool m_24HourFormat;
-    bool m_showSecond;
-    bool m_showDate;
-    bool m_showLunar;
-    bool m_showWeek;
+    QString m_format;
     mutable QFont m_timeFont;
-    mutable QFont m_dateFont;
-    mutable int m_timeOffset;
 };
 
 #endif // DATETIMEWIDGET_H

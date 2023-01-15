@@ -42,66 +42,16 @@ DatetimeWidget::DatetimeWidget(QWidget *parent)
     m_timeFont.setPixelSize(15);
 }
 
-void DatetimeWidget::setShowDate(const bool value)
-{
-    if (m_showDate == value) {
-        return;
-    }
-
-    m_showDate = value;
-    updateGeometry();
-    update();
-}
-
-void DatetimeWidget::setShowLunar(const bool value)
-{
-    if (m_showLunar == value) {
-        return;
-    }
-
-    m_showLunar = value;
-    updateGeometry();
-    update();
-}
-
-void DatetimeWidget::set24HourFormat(const bool value)
-{
-    if (m_24HourFormat == value) {
-        return;
-    }
-
-    m_24HourFormat = value;
-    updateGeometry();
-    update();
-}
-
-void DatetimeWidget::setShowSecond(const bool value)
-{
-    if(m_showSecond != value)
-    {
-        m_showSecond = value;
+void DatetimeWidget::setFormat(QString format) {
+    if(m_format != format) {
+        m_format = format;
         updateGeometry();
         update();
     }
 }
 
-void DatetimeWidget::setShowWeek(const bool value)
-{
-	if(m_showWeek != value)
-	{
-		m_showWeek = value;
-		updateGeometry();
-		update();
-	}
-}
-
 QSize DatetimeWidget::sizeHint() const
 {
-    // QString str = currentChinaTime();
-    // while (QFontMetrics(m_timeFont).boundingRect(str).size().height() > PLUGIN_BACKGROUND_MIN_SIZE - 2) {
-        // m_timeFont.setPixelSize(m_timeFont.pixelSize() - 1);
-    // }
-
     return QSize(QFontMetrics(m_timeFont).boundingRect(QRect(0,0,0,0), Qt::AlignLeft, currentChinaTime()).size().width() + 2, height());
 }
 
@@ -115,35 +65,21 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
     painter.setFont(m_timeFont);
     painter.setPen(QPen(palette().brush(QPalette::BrightText), 1));
 
-    painter.drawText(rect(), Qt::AlignVCenter | Qt::AlignLeft, currentChinaTime());
+    painter.drawText(rect(), Qt::AlignCenter, currentChinaTime());
 }
 
 QString DatetimeWidget::currentChinaTime() const
 {
-    QStringList date;
     const QDateTime current = QDateTime::currentDateTime();
     Lunar lunar;
 
-    if (m_showDate)
-    {
-        // date.append(QLocale::system().toString(current.date(), QLocale::ShortFormat));
-        date.append(current.date().toString("yyyy-MM-dd"));
+    QString ret = QLocale::system().toString(current, m_format);
+    if(ret.contains("GG")) {
+        static QString ganzhi = lunar.solar2Ganzhi(current.date());
+        ret.replace("GG", ganzhi);
     }
-
-    // date.append(QLocale::system().toString(current.time(), m_showSecond ? QLocale::LongFormat : QLocale::ShortFormat));
-    date.append(current.time().toString(QString().append(m_24HourFormat ? "HH" : "AP hh").append(":mm").append(m_showSecond ? ":ss" : "")));
-
-    if(m_showWeek)
-    {
-    	date.append(current.toString("ddd"));
-    }
-
-    if (m_showLunar)
-    {
-        date.append(QString("%1年  %2时").arg(lunar.toGanZhiBySolarYear(current.date().year())).arg(lunar.toDizhiHour(current.time().hour())));
-    }
-
-    return date.join(" ");
+    if(ret.contains("SS")) ret.replace("SS", lunar.toDizhiHour(current.time().hour()) + "时");
+    return ret;
 }
 
 QStringList DatetimeWidget::dateString()
@@ -154,7 +90,7 @@ QStringList DatetimeWidget::dateString()
 
     QStringList tips;
     tips.append(QString("干支：%1年 %2月 %3日 %4时").arg(dd.value("gzYear").toString(), dd.value("gzMonth").toString(), dd.value("gzDay").toString(), dd.value("gzHour").toString()));
-    tips.append(QString("始皇：%1年%2%3 %4 %5").arg(dd.value("lYear").toString(), dd.value("ImonthCn").toString(), dd.value("IdayCn").toString(), dd.value("animal").toString(), dd.value("Term").toString()));
+    tips.append(QString("始皇：%1年 %2%3 %4 %5").arg(dd.value("lYear").toString(), dd.value("ImonthCn").toString(), dd.value("IdayCn").toString(), dd.value("animal").toString(), dd.value("Term").toString()));
 
     tips.append("阳历：" + current.date().toString(Qt::SystemLocaleLongDate));
 

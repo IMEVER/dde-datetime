@@ -1,15 +1,13 @@
 #ifndef DATETIMEPLUGIN_H
 #define DATETIMEPLUGIN_H
 
-// #include <dde-dock/pluginsiteminterface.h>
-#include "../../interfaces/pluginsiteminterface.h"
+#include <dde-dock/pluginsiteminterface.h>
+// #include "../../interfaces/pluginsiteminterface.h"
 #include "datetimewidget.h"
 #include "../../widgets/tipswidget.h"
 
-
 #include <QTimer>
 #include <QLabel>
-#include <QSettings>
 
 class WeekWidget;
 
@@ -30,7 +28,7 @@ class Holiday {
 
         DayType getDayType(QDate date)
         {
-            if(m_start.dayOfYear() <= date.dayOfYear() && date.dayOfYear() <= m_end.dayOfYear())
+            if(m_start <= date && date <= m_end)
                 return Rest;
             else if(m_workdays.contains(date))
                 return Work;
@@ -85,12 +83,9 @@ public:
 private slots:
     void updateCurrentTimeString();
     void refreshPluginItemsVisible();
-    void propertiesChanged();
 
 private:
     void loadPlugin();
-    bool is24HourFormat();
-    void save24HourFormat(bool format);
 
 private:
     QPointer<DatetimeWidget> m_centralWidget;
@@ -102,7 +97,7 @@ private:
     int minute;
 
     bool m_pluginLoaded;
-    QSettings *m_settings;
+    bool m_showSecond;
 };
 
 #endif // DATETIMEPLUGIN_H

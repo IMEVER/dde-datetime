@@ -21,6 +21,7 @@
 
 #include "datetimeplugin.h"
 #include "weekwidget.h"
+#include "settingdialog.h"
 
 #include <QLabel>
 #include <QDebug>
@@ -156,7 +157,7 @@ const QString DatetimePlugin::itemContextMenu(const QString &itemKey)
 
     QMap<QString, QVariant> edit;
     edit["itemId"] = "edit";
-    edit["itemText"] = "编辑";
+    edit["itemText"] = "编辑配置文件";
     edit["isActive"] = true;
     items.append(edit);
 
@@ -168,7 +169,7 @@ const QString DatetimePlugin::itemContextMenu(const QString &itemKey)
 
     QMap<QString, QVariant> open;
     open["itemId"] = "open";
-    open["itemText"] = "系统时间设置";
+    open["itemText"] = "时间设置";
     open["isActive"] = true;
     items.append(open);
 
@@ -187,13 +188,27 @@ void DatetimePlugin::invokedMenuItem(const QString &itemKey, const QString &menu
 
     if (menuId == "open")
     {
-        DDBusSender()
-        .service("com.deepin.dde.ControlCenter")
-        .interface("com.deepin.dde.ControlCenter")
-        .path("/com/deepin/dde/ControlCenter")
-        .method(QString("ShowModule"))
-        .arg(QString("datetime"))
-        .call();
+        // DDBusSender()
+        // .service("com.deepin.dde.ControlCenter")
+        // .interface("com.deepin.dde.ControlCenter")
+        // .path("/com/deepin/dde/ControlCenter")
+        // .method(QString("ShowModule"))
+        // .arg(QString("datetime"))
+        // .call();
+
+        SettingDialog *dialog = new SettingDialog();
+        dialog->setModal(false);
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+
+        connect(dialog, &SettingDialog::formattingChanged, this, [this](const QString &format){
+            m_centralWidget->setFormat(format);
+            m_showSecond = format.contains('s', Qt::CaseSensitive);
+        });
+        connect(dialog, &SettingDialog::holidayChanged, this, [this](const QString &year){
+            m_weekWidget->refresh();
+        });
+
+        dialog->show();
     } else if(menuId == "openCalendar") {
         DDBusSender()
         .service("com.deepin.Calendar")

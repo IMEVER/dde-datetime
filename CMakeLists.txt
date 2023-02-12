@@ -1,6 +1,5 @@
 
 set(PLUGIN_NAME "datetime")
-
 project(${PLUGIN_NAME})
 
 set(CMAKE_AUTOMOC ON)
@@ -15,6 +14,8 @@ set(SRCS "datetimeplugin.cpp"
     "weekitem.cpp"
     "weekwidget.cpp"
     "weekwidget.ui"
+    "settingdialog.cpp"
+    "settings.ui"
     "../../widgets/tipswidget.cpp")
 
 find_package(PkgConfig REQUIRED)

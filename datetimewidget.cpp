@@ -28,31 +28,28 @@
 #include <QDebug>
 #include <QSvgRenderer>
 #include <DFontSizeManager>
+#include <QFontDatabase>
+#include <QMouseEvent>
 
 #define PLUGIN_STATE_KEY    "enable"
-#define TIME_FONT DFontSizeManager::instance()->t5()
 
 DWIDGET_USE_NAMESPACE
 
-DatetimeWidget::DatetimeWidget(QWidget *parent)
-    : QWidget(parent)
+DatetimeWidget::DatetimeWidget(QWidget *parent) : QWidget(parent)
 {
-    setMinimumSize(PLUGIN_BACKGROUND_MIN_SIZE, PLUGIN_BACKGROUND_MIN_SIZE);
-    m_timeFont = TIME_FONT;
-    m_timeFont.setPixelSize(15);
+    // m_timeFont = TIME_FONT;
+    QFont timeFont = DFontSizeManager::instance()->t5(); // QFont(QFontDatabase::applicationFontFamilies(QFontDatabase::addApplicationFont(":/resources/font/DigitalNumbers.ttf")).at(0));
+    timeFont.setPixelSize(14);
+    setFont(timeFont);
 }
 
 void DatetimeWidget::setFormat(QString format) {
     if(m_format != format) {
         m_format = format;
+        setFixedSize(fontMetrics().boundingRect(QRect(0,0,0,0), Qt::AlignLeft, currentChinaTime()).size().width() + 10, 24);
         updateGeometry();
         update();
     }
-}
-
-QSize DatetimeWidget::sizeHint() const
-{
-    return QSize(QFontMetrics(m_timeFont).boundingRect(QRect(0,0,0,0), Qt::AlignLeft, currentChinaTime()).size().width() + 2, height());
 }
 
 void DatetimeWidget::paintEvent(QPaintEvent *e)
@@ -61,11 +58,20 @@ void DatetimeWidget::paintEvent(QPaintEvent *e)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-
-    painter.setFont(m_timeFont);
     painter.setPen(QPen(palette().brush(QPalette::BrightText), 1));
 
     painter.drawText(rect(), Qt::AlignCenter, currentChinaTime());
+}
+
+void DatetimeWidget::mouseReleaseEvent(QMouseEvent *e) {
+    if(e->button() == Qt::LeftButton) {
+        if(e->pos().x() > rect().center().x()) {
+            QProcess::startDetached("dbus-send", {"--print-reply", "--dest=org.deepin.dde.Widgets1", "/org/deepin/dde/Widgets1", "org.deepin.dde.Widgets1.Toggle"});
+            return;
+        }
+    }
+
+    QWidget::mouseReleaseEvent(e);
 }
 
 QString DatetimeWidget::currentChinaTime() const
@@ -74,10 +80,8 @@ QString DatetimeWidget::currentChinaTime() const
     Lunar lunar;
 
     QString ret = QLocale::system().toString(current, m_format);
-    if(ret.contains("GG")) {
-        static QString ganzhi = lunar.solar2Ganzhi(current.date());
-        ret.replace("GG", ganzhi);
-    }
+    if(ret.contains("GG"))
+        ret.replace("GG", lunar.solar2Ganzhi(current.date()));
     if(ret.contains("SS")) ret.replace("SS", lunar.toDizhiHour(current.time().hour()) + "时");
     return ret;
 }
@@ -86,7 +90,7 @@ QStringList DatetimeWidget::dateString()
 {
     QDateTime current = QDateTime::currentDateTime();
     Lunar lunar;
-    QMap<QVariant, QVariant> dd = lunar.solar2lunar(current.date().year(), current.date().month(), current.date().day(), current.time().hour());
+    const QMap<QVariant, QVariant> &dd = lunar.solar2lunar(current.date().year(), current.date().month(), current.date().day(), current.time().hour());
 
     QStringList tips;
     tips.append(QString("干支：%1年 %2月 %3日 %4时").arg(dd.value("gzYear").toString(), dd.value("gzMonth").toString(), dd.value("gzDay").toString(), dd.value("gzHour").toString()));

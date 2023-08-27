@@ -9,24 +9,21 @@
 #include <QTimer>
 #include <QLabel>
 
-class WeekWidget;
+using namespace Dock;
 
+class WeekWidget;
+class Clock;
 class Holiday {
     public:
         enum DayType {
             Normal, Work, Rest
         };
 
-        Holiday(QDate start, QDate end, QList<QDate> workdays = QList<QDate>())
-        {
-            this->m_start = start;
-            this->m_end = end;
-            this->m_workdays = workdays;
-        }
+        static QList<Holiday> getHolidays(int year);
 
-        Holiday(QDate start) { Holiday(start, start); }
+        Holiday(){}
 
-        DayType getDayType(QDate date)
+        DayType getDayType(const QDate &date) const
         {
             if(m_start <= date && date <= m_end)
                 return Rest;
@@ -36,12 +33,12 @@ class Holiday {
                 return Normal;
         }
 
-        QString toString() const
-        {
-            return QString("%1,%2").arg(m_start.toString("yyyy-MM-dd")).arg(m_end.toString("yyyy-MM-dd"));
+        bool isValid() const {
+            return m_start.isValid();
         }
 
-    private:
+        QString m_title;
+        QDate m_day;
         QDate m_start;
         QDate m_end;
         QList<QDate> m_workdays;
@@ -54,6 +51,7 @@ class DatetimePlugin : public QObject, PluginsItemInterface
 
 public:
     explicit DatetimePlugin(QObject *parent = 0);
+    ~DatetimePlugin();
 
     const QString pluginName() const override;
     const QString pluginDisplayName() const override;
@@ -62,7 +60,7 @@ public:
     void pluginStateSwitched() override;
     bool pluginIsAllowDisable() override { return true; }
     bool pluginIsDisable() override;
-    PluginType type() override { return Fixed; }
+    PluginType type() override { return Normal; }
     PluginSizePolicy pluginSizePolicy() const override { return Custom; };
 
     int itemSortKey(const QString &itemKey) Q_DECL_OVERRIDE;
@@ -77,12 +75,10 @@ public:
 
     void invokedMenuItem(const QString &itemKey, const QString &menuId, const bool checked) override;
 
-    void pluginSettingsChanged() override;
-    QList<Holiday> getHolidays(int year);
+    PluginFlags flags() const override { return PluginFlag::Type_System | PluginFlag::Attribute_CanInsert | PluginFlag::Attribute_CanSetting; }
 
 private slots:
     void updateCurrentTimeString();
-    void refreshPluginItemsVisible();
 
 private:
     void loadPlugin();
@@ -90,13 +86,12 @@ private:
 private:
     QPointer<DatetimeWidget> m_centralWidget;
     QPointer<TipsWidget> m_dateTipsLabel;
+    Clock *m_clock;
     QTimer *m_refershTimer;
     QStringList tips;
     WeekWidget *m_weekWidget;
     int hour;
     int minute;
-
-    bool m_pluginLoaded;
     bool m_showSecond;
 };
 

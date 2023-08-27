@@ -14,6 +14,7 @@ set(SRCS "datetimeplugin.cpp"
     "weekitem.cpp"
     "weekwidget.cpp"
     "weekwidget.ui"
+    "clock.cpp"
     "settingdialog.cpp"
     "settings.ui"
     "../../widgets/tipswidget.cpp")

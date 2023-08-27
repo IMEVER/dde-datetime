@@ -20,6 +20,11 @@ public slots:
 signals:
     void formattingChanged(const QString &format);
     void holidayChanged(const QString &year);
+    void clockChanged(bool enable);
+    void clockEditeableChanged(bool enable);
+    void clockSizeChanged(int size);
+    void clockShowGanzhiChanged(bool enable);
+    void clockShowLunarChanged(bool enable);
 
 private:
     Ui::SettingDialog *ui;

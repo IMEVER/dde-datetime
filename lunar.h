@@ -56,72 +56,72 @@ private:
       * @return 0x string For splice
       */
     QStringList sTermInfo = {"9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e","97bcf97c3598082c95f8c965cc920f",
-              "97bd0b06bdb0722c965ce1cfcc920f","b027097bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e",
-              "97bcf97c359801ec95f8c965cc920f","97bd0b06bdb0722c965ce1cfcc920f","b027097bd097c36b0b6fc9274c91aa",
-              "97b6b97bd19801ec9210c965cc920e","97bcf97c359801ec95f8c965cc920f","97bd0b06bdb0722c965ce1cfcc920f",
-              "b027097bd097c36b0b6fc9274c91aa","9778397bd19801ec9210c965cc920e","97b6b97bd19801ec95f8c965cc920f",
-              "97bd09801d98082c95f8e1cfcc920f","97bd097bd097c36b0b6fc9210c8dc2","9778397bd197c36c9210c9274c91aa",
-              "97b6b97bd19801ec95f8c965cc920e","97bd09801d98082c95f8e1cfcc920f","97bd097bd097c36b0b6fc9210c8dc2",
-              "9778397bd097c36c9210c9274c91aa","97b6b97bd19801ec95f8c965cc920e","97bcf97c3598082c95f8e1cfcc920f",
-              "97bd097bd097c36b0b6fc9210c8dc2","9778397bd097c36c9210c9274c91aa","97b6b97bd19801ec9210c965cc920e",
-              "97bcf97c3598082c95f8c965cc920f","97bd097bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa",
-              "97b6b97bd19801ec9210c965cc920e","97bcf97c3598082c95f8c965cc920f","97bd097bd097c35b0b6fc920fb0722",
-              "9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e","97bcf97c359801ec95f8c965cc920f",
-              "97bd097bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e",
-              "97bcf97c359801ec95f8c965cc920f","97bd097bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa",
-              "97b6b97bd19801ec9210c965cc920e","97bcf97c359801ec95f8c965cc920f","97bd097bd07f595b0b6fc920fb0722",
-              "9778397bd097c36b0b6fc9210c8dc2","9778397bd19801ec9210c9274c920e","97b6b97bd19801ec95f8c965cc920f",
-              "97bd07f5307f595b0b0bc920fb0722","7f0e397bd097c36b0b6fc9210c8dc2","9778397bd097c36c9210c9274c920e",
-              "97b6b97bd19801ec95f8c965cc920f","97bd07f5307f595b0b0bc920fb0722","7f0e397bd097c36b0b6fc9210c8dc2",
-              "9778397bd097c36c9210c9274c91aa","97b6b97bd19801ec9210c965cc920e","97bd07f1487f595b0b0bc920fb0722",
-              "7f0e397bd097c36b0b6fc9210c8dc2","9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e",
-              "97bcf7f1487f595b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa",
-              "97b6b97bd19801ec9210c965cc920e","97bcf7f1487f595b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722",
-              "9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e","97bcf7f1487f531b0b0bb0b6fb0722",
-              "7f0e397bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e",
-              "97bcf7f1487f531b0b0bb0b6fb0722","7f0e397bd07f595b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa",
-              "97b6b97bd19801ec9210c9274c920e","97bcf7f0e47f531b0b0bb0b6fb0722","7f0e397bd07f595b0b0bc920fb0722",
-              "9778397bd097c36b0b6fc9210c91aa","97b6b97bd197c36c9210c9274c920e","97bcf7f0e47f531b0b0bb0b6fb0722",
-              "7f0e397bd07f595b0b0bc920fb0722","9778397bd097c36b0b6fc9210c8dc2","9778397bd097c36c9210c9274c920e",
-              "97b6b7f0e47f531b0723b0b6fb0722","7f0e37f5307f595b0b0bc920fb0722","7f0e397bd097c36b0b6fc9210c8dc2",
-              "9778397bd097c36b0b70c9274c91aa","97b6b7f0e47f531b0723b0b6fb0721","7f0e37f1487f595b0b0bb0b6fb0722",
-              "7f0e397bd097c35b0b6fc9210c8dc2","9778397bd097c36b0b6fc9274c91aa","97b6b7f0e47f531b0723b0b6fb0721",
-              "7f0e27f1487f595b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa",
-              "97b6b7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722",
-              "9778397bd097c36b0b6fc9274c91aa","97b6b7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722",
-              "7f0e397bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa","97b6b7f0e47f531b0723b0b6fb0721",
-              "7f0e27f1487f531b0b0bb0b6fb0722","7f0e397bd07f595b0b0bc920fb0722","9778397bd097c36b0b6fc9274c91aa",
-              "97b6b7f0e47f531b0723b0787b0721","7f0e27f0e47f531b0b0bb0b6fb0722","7f0e397bd07f595b0b0bc920fb0722",
-              "9778397bd097c36b0b6fc9210c91aa","97b6b7f0e47f149b0723b0787b0721","7f0e27f0e47f531b0723b0b6fb0722",
-              "7f0e397bd07f595b0b0bc920fb0722","9778397bd097c36b0b6fc9210c8dc2","977837f0e37f149b0723b0787b0721",
-              "7f07e7f0e47f531b0723b0b6fb0722","7f0e37f5307f595b0b0bc920fb0722","7f0e397bd097c35b0b6fc9210c8dc2",
-              "977837f0e37f14998082b0787b0721","7f07e7f0e47f531b0723b0b6fb0721","7f0e37f1487f595b0b0bb0b6fb0722",
-              "7f0e397bd097c35b0b6fc9210c8dc2","977837f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721",
-              "7f0e27f1487f531b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722","977837f0e37f14998082b0787b06bd",
-              "7f07e7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722",
-              "977837f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722",
-              "7f0e397bd07f595b0b0bc920fb0722","977837f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721",
-              "7f0e27f1487f531b0b0bb0b6fb0722","7f0e397bd07f595b0b0bc920fb0722","977837f0e37f14998082b0787b06bd",
-              "7f07e7f0e47f149b0723b0787b0721","7f0e27f0e47f531b0b0bb0b6fb0722","7f0e397bd07f595b0b0bc920fb0722",
-              "977837f0e37f14998082b0723b06bd","7f07e7f0e37f149b0723b0787b0721","7f0e27f0e47f531b0723b0b6fb0722",
-              "7f0e397bd07f595b0b0bc920fb0722","977837f0e37f14898082b0723b02d5","7ec967f0e37f14998082b0787b0721",
-              "7f07e7f0e47f531b0723b0b6fb0722","7f0e37f1487f595b0b0bb0b6fb0722","7f0e37f0e37f14898082b0723b02d5",
-              "7ec967f0e37f14998082b0787b0721","7f07e7f0e47f531b0723b0b6fb0722","7f0e37f1487f531b0b0bb0b6fb0722",
-              "7f0e37f0e37f14898082b0723b02d5","7ec967f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721",
-              "7f0e37f1487f531b0b0bb0b6fb0722","7f0e37f0e37f14898082b072297c35","7ec967f0e37f14998082b0787b06bd",
-              "7f07e7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722","7f0e37f0e37f14898082b072297c35",
-              "7ec967f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722",
-              "7f0e37f0e366aa89801eb072297c35","7ec967f0e37f14998082b0787b06bd","7f07e7f0e47f149b0723b0787b0721",
-              "7f0e27f1487f531b0b0bb0b6fb0722","7f0e37f0e366aa89801eb072297c35","7ec967f0e37f14998082b0723b06bd",
-              "7f07e7f0e47f149b0723b0787b0721","7f0e27f0e47f531b0723b0b6fb0722","7f0e37f0e366aa89801eb072297c35",
-              "7ec967f0e37f14998082b0723b06bd","7f07e7f0e37f14998083b0787b0721","7f0e27f0e47f531b0723b0b6fb0722",
-              "7f0e37f0e366aa89801eb072297c35","7ec967f0e37f14898082b0723b02d5","7f07e7f0e37f14998082b0787b0721",
-              "7f07e7f0e47f531b0723b0b6fb0722","7f0e36665b66aa89801e9808297c35","665f67f0e37f14898082b0723b02d5",
-              "7ec967f0e37f14998082b0787b0721","7f07e7f0e47f531b0723b0b6fb0722","7f0e36665b66a449801e9808297c35",
-              "665f67f0e37f14898082b0723b02d5","7ec967f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721",
-              "7f0e36665b66a449801e9808297c35","665f67f0e37f14898082b072297c35","7ec967f0e37f14998082b0787b06bd",
-              "7f07e7f0e47f531b0723b0b6fb0721","7f0e26665b66a449801e9808297c35","665f67f0e37f1489801eb072297c35",
-              "7ec967f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722"};
+            "97bd0b06bdb0722c965ce1cfcc920f","b027097bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e",
+            "97bcf97c359801ec95f8c965cc920f","97bd0b06bdb0722c965ce1cfcc920f","b027097bd097c36b0b6fc9274c91aa",
+            "97b6b97bd19801ec9210c965cc920e","97bcf97c359801ec95f8c965cc920f","97bd0b06bdb0722c965ce1cfcc920f",
+            "b027097bd097c36b0b6fc9274c91aa","9778397bd19801ec9210c965cc920e","97b6b97bd19801ec95f8c965cc920f",
+            "97bd09801d98082c95f8e1cfcc920f","97bd097bd097c36b0b6fc9210c8dc2","9778397bd197c36c9210c9274c91aa",
+            "97b6b97bd19801ec95f8c965cc920e","97bd09801d98082c95f8e1cfcc920f","97bd097bd097c36b0b6fc9210c8dc2",
+            "9778397bd097c36c9210c9274c91aa","97b6b97bd19801ec95f8c965cc920e","97bcf97c3598082c95f8e1cfcc920f",
+            "97bd097bd097c36b0b6fc9210c8dc2","9778397bd097c36c9210c9274c91aa","97b6b97bd19801ec9210c965cc920e",
+            "97bcf97c3598082c95f8c965cc920f","97bd097bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa",
+            "97b6b97bd19801ec9210c965cc920e","97bcf97c3598082c95f8c965cc920f","97bd097bd097c35b0b6fc920fb0722",
+            "9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e","97bcf97c359801ec95f8c965cc920f",
+            "97bd097bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e",
+            "97bcf97c359801ec95f8c965cc920f","97bd097bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa",
+            "97b6b97bd19801ec9210c965cc920e","97bcf97c359801ec95f8c965cc920f","97bd097bd07f595b0b6fc920fb0722",
+            "9778397bd097c36b0b6fc9210c8dc2","9778397bd19801ec9210c9274c920e","97b6b97bd19801ec95f8c965cc920f",
+            "97bd07f5307f595b0b0bc920fb0722","7f0e397bd097c36b0b6fc9210c8dc2","9778397bd097c36c9210c9274c920e",
+            "97b6b97bd19801ec95f8c965cc920f","97bd07f5307f595b0b0bc920fb0722","7f0e397bd097c36b0b6fc9210c8dc2",
+            "9778397bd097c36c9210c9274c91aa","97b6b97bd19801ec9210c965cc920e","97bd07f1487f595b0b0bc920fb0722",
+            "7f0e397bd097c36b0b6fc9210c8dc2","9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e",
+            "97bcf7f1487f595b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa",
+            "97b6b97bd19801ec9210c965cc920e","97bcf7f1487f595b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722",
+            "9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e","97bcf7f1487f531b0b0bb0b6fb0722",
+            "7f0e397bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa","97b6b97bd19801ec9210c965cc920e",
+            "97bcf7f1487f531b0b0bb0b6fb0722","7f0e397bd07f595b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa",
+            "97b6b97bd19801ec9210c9274c920e","97bcf7f0e47f531b0b0bb0b6fb0722","7f0e397bd07f595b0b0bc920fb0722",
+            "9778397bd097c36b0b6fc9210c91aa","97b6b97bd197c36c9210c9274c920e","97bcf7f0e47f531b0b0bb0b6fb0722",
+            "7f0e397bd07f595b0b0bc920fb0722","9778397bd097c36b0b6fc9210c8dc2","9778397bd097c36c9210c9274c920e",
+            "97b6b7f0e47f531b0723b0b6fb0722","7f0e37f5307f595b0b0bc920fb0722","7f0e397bd097c36b0b6fc9210c8dc2",
+            "9778397bd097c36b0b70c9274c91aa","97b6b7f0e47f531b0723b0b6fb0721","7f0e37f1487f595b0b0bb0b6fb0722",
+            "7f0e397bd097c35b0b6fc9210c8dc2","9778397bd097c36b0b6fc9274c91aa","97b6b7f0e47f531b0723b0b6fb0721",
+            "7f0e27f1487f595b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa",
+            "97b6b7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722",
+            "9778397bd097c36b0b6fc9274c91aa","97b6b7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722",
+            "7f0e397bd097c35b0b6fc920fb0722","9778397bd097c36b0b6fc9274c91aa","97b6b7f0e47f531b0723b0b6fb0721",
+            "7f0e27f1487f531b0b0bb0b6fb0722","7f0e397bd07f595b0b0bc920fb0722","9778397bd097c36b0b6fc9274c91aa",
+            "97b6b7f0e47f531b0723b0787b0721","7f0e27f0e47f531b0b0bb0b6fb0722","7f0e397bd07f595b0b0bc920fb0722",
+            "9778397bd097c36b0b6fc9210c91aa","97b6b7f0e47f149b0723b0787b0721","7f0e27f0e47f531b0723b0b6fb0722",
+            "7f0e397bd07f595b0b0bc920fb0722","9778397bd097c36b0b6fc9210c8dc2","977837f0e37f149b0723b0787b0721",
+            "7f07e7f0e47f531b0723b0b6fb0722","7f0e37f5307f595b0b0bc920fb0722","7f0e397bd097c35b0b6fc9210c8dc2",
+            "977837f0e37f14998082b0787b0721","7f07e7f0e47f531b0723b0b6fb0721","7f0e37f1487f595b0b0bb0b6fb0722",
+            "7f0e397bd097c35b0b6fc9210c8dc2","977837f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721",
+            "7f0e27f1487f531b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722","977837f0e37f14998082b0787b06bd",
+            "7f07e7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722","7f0e397bd097c35b0b6fc920fb0722",
+            "977837f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722",
+            "7f0e397bd07f595b0b0bc920fb0722","977837f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721",
+            "7f0e27f1487f531b0b0bb0b6fb0722","7f0e397bd07f595b0b0bc920fb0722","977837f0e37f14998082b0787b06bd",
+            "7f07e7f0e47f149b0723b0787b0721","7f0e27f0e47f531b0b0bb0b6fb0722","7f0e397bd07f595b0b0bc920fb0722",
+            "977837f0e37f14998082b0723b06bd","7f07e7f0e37f149b0723b0787b0721","7f0e27f0e47f531b0723b0b6fb0722",
+            "7f0e397bd07f595b0b0bc920fb0722","977837f0e37f14898082b0723b02d5","7ec967f0e37f14998082b0787b0721",
+            "7f07e7f0e47f531b0723b0b6fb0722","7f0e37f1487f595b0b0bb0b6fb0722","7f0e37f0e37f14898082b0723b02d5",
+            "7ec967f0e37f14998082b0787b0721","7f07e7f0e47f531b0723b0b6fb0722","7f0e37f1487f531b0b0bb0b6fb0722",
+            "7f0e37f0e37f14898082b0723b02d5","7ec967f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721",
+            "7f0e37f1487f531b0b0bb0b6fb0722","7f0e37f0e37f14898082b072297c35","7ec967f0e37f14998082b0787b06bd",
+            "7f07e7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722","7f0e37f0e37f14898082b072297c35",
+            "7ec967f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722",
+            "7f0e37f0e366aa89801eb072297c35","7ec967f0e37f14998082b0787b06bd","7f07e7f0e47f149b0723b0787b0721",
+            "7f0e27f1487f531b0b0bb0b6fb0722","7f0e37f0e366aa89801eb072297c35","7ec967f0e37f14998082b0723b06bd",
+            "7f07e7f0e47f149b0723b0787b0721","7f0e27f0e47f531b0723b0b6fb0722","7f0e37f0e366aa89801eb072297c35",
+            "7ec967f0e37f14998082b0723b06bd","7f07e7f0e37f14998083b0787b0721","7f0e27f0e47f531b0723b0b6fb0722",
+            "7f0e37f0e366aa89801eb072297c35","7ec967f0e37f14898082b0723b02d5","7f07e7f0e37f14998082b0787b0721",
+            "7f07e7f0e47f531b0723b0b6fb0722","7f0e36665b66aa89801e9808297c35","665f67f0e37f14898082b0723b02d5",
+            "7ec967f0e37f14998082b0787b0721","7f07e7f0e47f531b0723b0b6fb0722","7f0e36665b66a449801e9808297c35",
+            "665f67f0e37f14898082b0723b02d5","7ec967f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721",
+            "7f0e36665b66a449801e9808297c35","665f67f0e37f14898082b072297c35","7ec967f0e37f14998082b0787b06bd",
+            "7f07e7f0e47f531b0723b0b6fb0721","7f0e26665b66a449801e9808297c35","665f67f0e37f1489801eb072297c35",
+            "7ec967f0e37f14998082b0787b06bd","7f07e7f0e47f531b0723b0b6fb0721","7f0e27f1487f531b0b0bb0b6fb0722"};
 
     /**
       * 返回农历y年一整年的总天数
@@ -132,9 +132,7 @@ private:
     {
         int i, sum = 348;
         for(i=0x8000; i>0x8; i>>=1)
-        {
             sum += (lunarInfo[year-1900] & i) ? 1: 0;
-        }
         return sum + leapDays(year);
     }
 
@@ -157,9 +155,7 @@ private:
     int leapDays(int year)
     {
         if(getLeapMonth(year) > 0)
-        {
             return (lunarInfo[year-1900] & 0x10000) ? 30 : 29;
-        }
         return 0;
     }
 
@@ -192,11 +188,10 @@ private:
         if(m>12 || m<1) {
             return -1;
         } //若参数错误 返回-1
-        if(m==2) { //2月份的闰平规律测算后确认返回28或29
+        if(m==2) //2月份的闰平规律测算后确认返回28或29
             return (((y%4 == 0) && (y%100 != 0)) || (y%400 == 0)) ? 29: 28;
-        }else {
+        else
             return solarMonth[m - 1];
-        }
     }
 
     /**
@@ -293,12 +288,9 @@ private:
       * @eg:var cnMonth = calendar.toChinaMonth(12) ;//cnMonth="腊月"
     */
     QString toChinaMonth (int m) {
-        if(m>12 || m<1)
-        {
-            return nullptr;
-        }
-        auto s = 月[m-1];
-        s+= "月";//加上月字
+        QString s;
+        if(m>0 && m<13)
+            s = 月[m-1] + "月";
         return s;
     }
 
@@ -336,7 +328,7 @@ private:
         return 生肖[(y + 3) % 12];
     }
 
- public:
+public:
 
     /**
      * 公历年份转换为干支纪年
@@ -364,13 +356,12 @@ private:
       */
     QString solar2Ganzhi (QDate objDate)
     {
-        static QString preDate;
+        static QDate preDate;
         static QString ret;
 
-        if(!preDate.isEmpty() && !ret.isEmpty() && preDate == objDate.toString("yyyy-MM-dd"))
-            return ret;
+        if(!ret.isEmpty() && preDate == objDate) return ret;
 
-        preDate = objDate.toString("yyyy-MM-dd");
+        preDate = objDate;
 
         QDate epochDate(1900, 1, 31);
 
@@ -385,9 +376,7 @@ private:
                 i++;
             }
             else
-            {
                 break;
-            }
         }
 
         ret = toGanZhiYear(i + 221);
@@ -403,22 +392,92 @@ private:
       * @return JSON object
       * @eg:console.log(calendar.solar2lunar(1987,11,01));
       */
-    QMap<QVariant, QVariant> solar2lunar (const short y, const short m, const short d, const short hour=0)
+    const QPair<QString, QString> &solar2lunarDate (const QDate &date)
+    {
+        static QPair<QString, QString> cache;
+        static QDate preDate;
+
+        if(preDate == date) return cache;
+
+        preDate = date;
+
+        auto i=0, temp=0;
+        auto offset = (QDateTime(date, QTime(0, 0, 0)).toMSecsSinceEpoch() - QDateTime(QDate(1900, 1, 31), QTime(0, 0, 0)).toMSecsSinceEpoch())/86400000;
+        for(i=1900; i<2101 && offset>0; )
+        {
+            temp = lYearDays(i);
+            if(offset > temp)
+            {
+                offset -= temp;
+                i++;
+            }
+            else
+                break;
+        }
+
+        //农历年
+        auto year = i;
+        auto leap = getLeapMonth(i); //闰哪个月
+        auto isLeap = false;
+
+        //效验闰月
+        for(i=1; i<13 && offset>0; i++) {
+            //闰月
+            if(leap>0 && i==(leap+1) && isLeap==false)
+            {
+                --i;
+                isLeap = true;
+                temp = leapDays(year); //计算农历闰月天数
+            }
+            else
+                temp = monthDays(year, i);//计算农历普通月天数
+            //解除闰月
+            if(isLeap==true && i==(leap+1)) isLeap = false;
+            offset -= temp;
+        }
+        // 闰月导致数组下标重叠取反
+        if(offset==0 && leap>0 && i==leap+1)
+        {
+            isLeap = !isLeap;
+            if(isLeap) --i;
+        }
+
+        if(offset<0)
+        {
+            offset += temp;
+            --i;
+        }
+        if(i == 13) i = 1;
+
+        cache.first = (isLeap ? "润": "") + toChinaMonth(i);
+        cache.second = toChinaDay(offset + 1);
+
+        return cache;
+    }
+
+    /**
+      * 传入阳历年月日获得详细的公历、农历object信息 <=>JSON
+      * @param y  solar year
+      * @param m  solar month
+      * @param d  solar day
+      * @return JSON object
+      * @eg:console.log(calendar.solar2lunar(1987,11,01));
+      */
+    const QMap<QVariant, QVariant> &solar2lunar (const short y, const short m, const short d, const short hour=0)
     {
          //参数区间1900.1.31~2100.12.31
 
+        static QMap<QVariant, QVariant> cache;
         static QString preDate;
-        static QMap<QVariant, QVariant> a;
 
         const QString currentDate = QString("%1-%2-%3").arg(y, 4, 10, QChar('0')).arg(m, 2, 10, QChar('0')).arg(d, 2, 10, QChar('0'));
-        if(!preDate.isEmpty() && !a.isEmpty() && preDate == currentDate) {
+        if(preDate == currentDate) {
             int dayCyclical = QDateTime(QDate(y, m, d), QTime(0, 0, 0)).toMSecsSinceEpoch()/86400000+25567+11;
-            a.insert("gzHour", toGanZhiHour(dayCyclical, hour));
-            return a;
+            cache.insert("gzHour", toGanZhiHour(dayCyclical, hour));
+            return cache;
         }
 
         preDate = currentDate;
-        a.clear();
 
         QDate objDate(y, m, d);
         QDate epochDate(1900, 1, 31);
@@ -434,9 +493,7 @@ private:
                 i++;
             }
             else
-            {
                 break;
-            }
         }
 
         //星期几
@@ -458,14 +515,10 @@ private:
                 temp = leapDays(year); //计算农历闰月天数
             }
             else
-            {
                 temp = monthDays(year, i);//计算农历普通月天数
-            }
             //解除闰月
             if(isLeap==true && i==(leap+1))
-            {
                 isLeap = false;
-            }
             offset -= temp;
         }
         // 闰月导致数组下标重叠取反
@@ -512,26 +565,26 @@ private:
         int dayCyclical = QDateTime(QDate(y, m, d), QTime(0, 0, 0)).toMSecsSinceEpoch()/86400000+25567+11;
         // int dayCyclical = (QDateTime(QDate(y, m - 1, d), QTime(0, 0, 0)).toMSecsSinceEpoch() - QDateTime(QDate(1900, 0, 1), QTime(0, 0, 0)).toMSecsSinceEpoch())/86400000+10;
 
-        a.insert("lYear", year + 221);
-        a.insert("lMonth", month);
-        a.insert("lDay", day);
-        a.insert("animal", getAnimal(year + 221));
-        a.insert("ImonthCn", (isLeap ? "润": "") + toChinaMonth(month));
-        a.insert("IdayCn", toChinaDay(day));
-        a.insert("cYear", y);
-        a.insert("cMonth", m);
-        a.insert("cDay", d);
-        a.insert("gzYear", toGanZhiYear(year + 221));
-        a.insert("gzMonth", toGanZhiMonth(year + 221, month)); //d>=firstNode ? toGanZhi((y-1900)*12+m+12) : toGanZhi((y-1900)*12+m+11));
-        a.insert("gzDay", toGanZhi(dayCyclical));
-        a.insert("gzHour", toGanZhiHour(dayCyclical, hour));
-        a.insert("isLeap", isLeap);
-        a.insert("nWeek", nWeek);
-        a.insert("ncWeek", "星期"+cWeek);
-        a.insert("isTerm", isTerm);
-        a.insert("Term", Term);
+        cache.insert("lYear", year + 221);
+        cache.insert("lMonth", month);
+        cache.insert("lDay", day);
+        cache.insert("animal", getAnimal(year + 221));
+        cache.insert("ImonthCn", (isLeap ? "润": "") + toChinaMonth(month));
+        cache.insert("IdayCn", toChinaDay(day));
+        cache.insert("cYear", y);
+        cache.insert("cMonth", m);
+        cache.insert("cDay", d);
+        cache.insert("gzYear", toGanZhiYear(year + 221));
+        cache.insert("gzMonth", toGanZhiMonth(year + 221, month)); //d>=firstNode ? toGanZhi((y-1900)*12+m+12) : toGanZhi((y-1900)*12+m+11));
+        cache.insert("gzDay", toGanZhi(dayCyclical));
+        cache.insert("gzHour", toGanZhiHour(dayCyclical, hour));
+        cache.insert("isLeap", isLeap);
+        cache.insert("nWeek", nWeek);
+        cache.insert("ncWeek", "星期"+cWeek);
+        cache.insert("isTerm", isTerm);
+        cache.insert("Term", Term);
 
-        return a;
+        return cache;
     }
 
 
@@ -543,10 +596,18 @@ private:
       * @return JSON object
       * @eg:console.log(calendar.solar2lunar(1987,11,01));
       */
-    QMap<QVariant, QVariant> solar2lunarDay (const int y, const int m, const int d)
+    const QMap<QVariant, QVariant> &solar2lunarDay (const int y, const int m, const int d)
     {
          //参数区间1900.1.31~2100.12.31
-        QMap<QVariant, QVariant> a;
+
+        static QMap<QVariant, QVariant> cache;
+        static QString preDate;
+
+        const QString currentDate = QString("%1-%2-%3").arg(y, 4, 10, QChar('0')).arg(m, 2, 10, QChar('0')).arg(d, 2, 10, QChar('0'));
+        if(preDate == currentDate)
+            return cache;
+
+        preDate = currentDate;
 
         QDate objDate(y, m, d);
         QDate epochDate(1900, 1, 31);
@@ -562,9 +623,7 @@ private:
                 i++;
             }
             else
-            {
                 break;
-            }
         }
 
         //农历年
@@ -582,14 +641,10 @@ private:
                 temp = leapDays(year); //计算农历闰月天数
             }
             else
-            {
                 temp = monthDays(year, i);//计算农历普通月天数
-            }
             //解除闰月
             if(isLeap==true && i==(leap+1))
-            {
                 isLeap = false;
-            }
             offset -= temp;
         }
         // 闰月导致数组下标重叠取反
@@ -622,20 +677,19 @@ private:
         //传入的日期的节气与否
         QString Term;
         if(firstNode == d)
-        {
             Term    = 节气[m*2-2];
-        }
         else if(getTerm(y, m * 2) == d)
-        {
             Term    = 节气[m*2-1];
-        }
 
-        a.insert("Iday", day);
-        a.insert("ImonthCn", (isLeap ? "润": "") + toChinaMonth(month));
-        a.insert("IdayCn", toChinaDay(day));
-        a.insert("Term", Term);
-        a.insert("Holiday", getHoliday(year, month, day));
-        return a;
+        cache.insert("Iday", day);
+        cache.insert("ImonthCn", (isLeap ? "润": "") + toChinaMonth(month));
+        cache.insert("IdayCn", toChinaDay(day));
+        cache.insert("Term", Term);
+        QString holiday = getHoliday(year, month, day);
+        if (holiday.isEmpty() == false)
+            cache.insert("Holiday", holiday);
+
+        return cache;
     }
 
     /**
@@ -647,32 +701,32 @@ private:
       * @return JSON object
       * @eg:console.log(calendar.lunar2solar(1987,9,10));
       */
-    QMap<QVariant, QVariant> lunar2solar (int y, int m, int d, bool isLeapMonth) {
+    const QMap<QVariant, QVariant> &lunar2solar (int y, int m, int d, bool isLeapMonth) {
         auto leapMonth   = getLeapMonth(y);
-        QMap<QVariant, QVariant> aa;
-        if(isLeapMonth && (leapMonth!=m)) {
+        static const QMap<QVariant, QVariant> aa;
+        if(isLeapMonth && (leapMonth!=m))
             return aa;
-        }
+
         //传参要求计算该闰月公历 但该年得出的闰月与传参的月份并不同
-        if((y==2100 && m==12 && d>1) || (y==1900 && m==1 && d<31)) {
+        if((y==2100 && m==12 && d>1) || (y==1900 && m==1 && d<31))
             return aa;
-        }//超出了最大极限值
+        //超出了最大极限值
         auto day  = monthDays(y,m);
         auto _day = day;
         //bugFix 2016-9-25
         //if month is leap, _day use leapDays method
-        if(isLeapMonth) {
+        if(isLeapMonth)
             _day = leapDays(y);
-        }
-        if(y < 1900 || y > 2100 || d > _day) {
+
+        if(y < 1900 || y > 2100 || d > _day)
             return aa;
-        }//参数合法性效验
+        //参数合法性效验
 
         //计算农历的时间差
         auto offset = 0;
-        for(auto i=1900;i<y;i++) {
+        for(auto i=1900;i<y;i++)
             offset+=lYearDays(i);
-        }
+
         auto leap = 0;
         auto isAdd= false;
         for(auto i=1;i<m;i++)
@@ -687,9 +741,8 @@ private:
             offset+=monthDays(y,i);
         }
         //转换闰月农历 需补充该年闰月的前一个月的时差
-        if(isLeapMonth) {
-            offset+=day;
-        }
+        if(isLeapMonth) offset+=day;
+
         //1900年农历正月一日的公历时间为1900年1月30日0时0分0秒(该时间也是本农历的最开始起始点)
         auto stmap   =   QDateTime(QDate(1900,1,30), QTime(0, 0, 0)).toMSecsSinceEpoch();
         auto calObj  =   QDateTime::fromMSecsSinceEpoch((offset+d-31)*86400000+stmap);

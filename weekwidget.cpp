@@ -33,7 +33,8 @@ WeekWidget::WeekWidget(DatetimePlugin *plugin, QWidget *parent) : QWidget(parent
     m_plugin(plugin),
     ui(new Ui::WeekWidget)
 {
-    ui->setupUi(this);ui->tableWidget->setItemDelegate(new CMarginDelegate(this));
+    ui->setupUi(this);
+    ui->tableWidget->setItemDelegate(new CMarginDelegate(this));
 
     QStringList weeks = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
     ui->tableWidget->setHorizontalHeaderLabels(weeks);
@@ -57,6 +58,16 @@ WeekWidget::WeekWidget(DatetimePlugin *plugin, QWidget *parent) : QWidget(parent
 
 WeekWidget::~WeekWidget(){
     delete ui;
+}
+
+void WeekWidget::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+    window()->setAttribute(Qt::WA_AlwaysShowToolTips);
+}
+
+void WeekWidget::hideEvent(QHideEvent *event) {
+    QWidget::hideEvent(event);
+    window()->setAttribute(Qt::WA_AlwaysShowToolTips, false);
 }
 
 void WeekWidget::updateTime()
@@ -83,14 +94,13 @@ void WeekWidget::showMonth()
     ui->currentLabel->setText(QString("%1月").arg(m_showDate.month()));
     ui->returnButton->setText(m_showDate.month() == QDate::currentDate().month() ? "今天" : "返回今天");
 
-    auto getDayType = [this](QDate day) {
-        for(Holiday holiday : m_holidays.value(day.year()))
+    auto getHoliday = [this](QDate day) {
+        for(auto holiday : m_holidays.value(day.year()))
         {
-            Holiday::DayType type = holiday.getDayType(day);
-            if(type != Holiday::Normal)
-                return type;
+            if(holiday.getDayType(day) != Holiday::Normal)
+                return holiday;
         }
-        return Holiday::Normal;
+        return Holiday();
     };
 
     QDate start = m_showDate.dayOfWeek() == 7 ? m_showDate : m_showDate.addDays(-m_showDate.dayOfWeek());
@@ -98,7 +108,7 @@ void WeekWidget::showMonth()
     while(row < 5 && column < 7)
     {
         if(!m_holidays.contains(start.year()))
-            m_holidays.insert(start.year(), m_plugin->getHolidays(start.year()));
+            m_holidays.insert(start.year(), Holiday::getHolidays(start.year()));
 
         WeekItem *item = static_cast<WeekItem *>(ui->tableWidget->cellWidget(row, column));
         if(item == nullptr)
@@ -107,7 +117,7 @@ void WeekWidget::showMonth()
             ui->tableWidget->setCellWidget(row, column, item);
         }
 
-        item->updateInfo(start, getDayType(start), start.month() == m_showDate.month());
+        item->updateInfo(start, getHoliday(start), start.month() == m_showDate.month());
 
         QTableWidgetItem *tmp = ui->tableWidget->item(row, column);
         if(!tmp)

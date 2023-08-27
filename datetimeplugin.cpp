@@ -21,6 +21,7 @@
 
 #include "datetimeplugin.h"
 #include "weekwidget.h"
+#include "clock.h"
 #include "settingdialog.h"
 
 #include <QLabel>
@@ -35,9 +36,21 @@ static const QString confFile = QStandardPaths::writableLocation(QStandardPaths:
 
 DatetimePlugin::DatetimePlugin(QObject *parent)
     : QObject(parent)
-    , m_pluginLoaded(false)
+    , m_centralWidget(nullptr)
+    , m_dateTipsLabel(nullptr)
+    , m_clock(nullptr)
+    , m_refershTimer(nullptr)
+    , m_weekWidget(nullptr)
 {
 
+}
+
+DatetimePlugin::~DatetimePlugin() {
+    if(m_refershTimer) m_refershTimer->deleteLater();
+    if(m_dateTipsLabel) m_dateTipsLabel->deleteLater();
+    if(m_weekWidget) m_weekWidget->deleteLater();
+    if(m_centralWidget) m_centralWidget->deleteLater();
+    if(m_clock) m_clock->deleteLater();
 }
 
 const QString DatetimePlugin::pluginName() const
@@ -54,28 +67,19 @@ void DatetimePlugin::init(PluginProxyInterface *proxyInter)
 {
     m_proxyInter = proxyInter;
 
-    if (pluginIsDisable()) {
-        return;
-    }
-
-    loadPlugin();
+    if (pluginIsDisable() == false)
+        loadPlugin();
 }
 
 void DatetimePlugin::loadPlugin()
 {
-    if (m_pluginLoaded)
-        return;
-
     QSettings m_settings(confFile, QSettings::IniFormat);
     m_settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
 
-    m_pluginLoaded = true;
     m_dateTipsLabel = new TipsWidget;
     m_weekWidget = new WeekWidget(this);
     m_refershTimer = new QTimer(this);
-
     m_refershTimer->setInterval(1000);
-    m_refershTimer->start();
 
     m_centralWidget = new DatetimeWidget();
     m_centralWidget->setFormat(m_settings.value("format", "yyyy/MM/dd HH:mm").toString());
@@ -84,16 +88,39 @@ void DatetimePlugin::loadPlugin()
     connect(m_centralWidget, &DatetimeWidget::requestUpdateGeometry, [this] { m_proxyInter->itemUpdate(this, pluginName()); });
     connect(m_refershTimer, &QTimer::timeout, this, &DatetimePlugin::updateCurrentTimeString);
 
+    updateCurrentTimeString();
+
     m_proxyInter->itemAdded(this, pluginName());
 
-    pluginSettingsChanged();
+    if(m_settings.value("showDesktopClock", true).toBool()) {
+        m_clock = new Clock(m_settings.value("clockSize", 300).toInt(), m_settings.value("showGanzhi", true).toBool(), m_settings.value("showLunar", true).toBool());
+        m_clock->show();
+    }
+
+    m_refershTimer->start();
 }
 
 void DatetimePlugin::pluginStateSwitched()
 {
     m_proxyInter->saveValue(this, PLUGIN_STATE_KEY, pluginIsDisable());
 
-    refreshPluginItemsVisible();
+    if (!pluginIsDisable()) {
+        loadPlugin();
+    } else {
+        m_proxyInter->itemRemoved(this, pluginName());
+        m_refershTimer->deleteLater();
+        m_refershTimer = nullptr;
+        m_dateTipsLabel->deleteLater();
+        m_dateTipsLabel = nullptr;
+        m_weekWidget->deleteLater();
+        m_weekWidget = nullptr;
+        m_centralWidget->deleteLater();
+        m_centralWidget = nullptr;
+        if(m_clock) {
+            m_clock->deleteLater();
+            m_clock = nullptr;
+        }
+    }
 }
 
 bool DatetimePlugin::pluginIsDisable()
@@ -139,7 +166,7 @@ const QString DatetimePlugin::itemCommand(const QString &itemKey)
 {
     Q_UNUSED(itemKey);
 
-    return nullptr; //"dbus-send --print-reply --dest=com.deepin.Calendar /com/deepin/Calendar com.deepin.Calendar.RaiseWindow";
+    return QString(); //"dbus-send --print-reply --dest=com.deepin.Calendar /com/deepin/Calendar com.deepin.Calendar.RaiseWindow";
 }
 
 const QString DatetimePlugin::itemContextMenu(const QString &itemKey)
@@ -203,9 +230,38 @@ void DatetimePlugin::invokedMenuItem(const QString &itemKey, const QString &menu
         connect(dialog, &SettingDialog::formattingChanged, this, [this](const QString &format){
             m_centralWidget->setFormat(format);
             m_showSecond = format.contains('s', Qt::CaseSensitive);
+            m_proxyInter->itemUpdate(this, pluginName());
         });
         connect(dialog, &SettingDialog::holidayChanged, this, [this](const QString &year){
             m_weekWidget->refresh();
+        });
+
+        connect(dialog, &SettingDialog::clockEditeableChanged, this, [this](bool enable) {
+            if(m_clock) m_clock->edit(enable);
+        });
+        connect(dialog, &SettingDialog::destroyed, this, [this] {
+            if(m_clock) m_clock->edit(false);
+        });
+        connect(dialog, &SettingDialog::clockSizeChanged, this, [this](int value) {
+            if(m_clock) m_clock->setFixedSize(value, value);
+        });
+        connect(dialog, &SettingDialog::clockShowGanzhiChanged, this, [this](int value) {
+            if(m_clock) m_clock->enableGanzhi(value);
+        });
+        connect(dialog, &SettingDialog::clockShowLunarChanged, this, [this](int value) {
+            if(m_clock) m_clock->enableLunar(value);
+        });
+        connect(dialog, &SettingDialog::clockChanged, this, [this](bool enable) {
+            if(enable && !m_clock) {
+                QSettings m_settings(confFile, QSettings::IniFormat);
+                m_settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
+                m_clock = new Clock(m_settings.value("clockSize", 300).toInt(), m_settings.value("showGanzhi", true).toBool(), m_settings.value("showLunar", true).toBool());
+                m_clock->show();
+            } else if(!enable && m_clock) {
+                m_clock->hide();
+                m_clock->deleteLater();
+                m_clock = nullptr;
+            }
         });
 
         dialog->show();
@@ -224,15 +280,10 @@ void DatetimePlugin::invokedMenuItem(const QString &itemKey, const QString &menu
         m_centralWidget->setFormat(format);
         m_weekWidget->refresh();
         m_showSecond = format.contains('s', Qt::CaseSensitive);
+        m_proxyInter->itemUpdate(this, pluginName());
     } else if(menuId == "edit") {
         QDesktopServices::openUrl(QUrl::fromLocalFile(confFile));
     }
-}
-
-void DatetimePlugin::pluginSettingsChanged()
-{
-    if (m_pluginLoaded)
-        refreshPluginItemsVisible();
 }
 
 void DatetimePlugin::updateCurrentTimeString()
@@ -267,26 +318,7 @@ void DatetimePlugin::updateCurrentTimeString()
     m_centralWidget->update();
 }
 
-void DatetimePlugin::refreshPluginItemsVisible()
-{
-    if (!pluginIsDisable()) {
-
-        if (!m_pluginLoaded) {
-            loadPlugin();
-            return;
-        }
-        m_proxyInter->itemAdded(this, pluginName());
-    } else {
-        m_proxyInter->itemRemoved(this, pluginName());
-        m_pluginLoaded = false;
-        m_refershTimer->deleteLater();
-        m_dateTipsLabel->deleteLater();
-        m_weekWidget->deleteLater();
-        m_centralWidget->deleteLater();
-    }
-}
-
-QList<Holiday> DatetimePlugin::getHolidays(int year)
+QList<Holiday> Holiday::getHolidays(int year)
 {
     QSettings m_settings(confFile, QSettings::IniFormat);
     m_settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
@@ -298,23 +330,21 @@ QList<Holiday> DatetimePlugin::getHolidays(int year)
     for(int i=0; i < size; i++)
     {
         m_settings.setArrayIndex(i);
-        QStringList days = m_settings.value("day").toString().split('|', Qt::SkipEmptyParts);
-        if(days.count() > 0) {
-            QDate start, end;
-            QList<QDate> works;
+        QString day = m_settings.value("day").toString();
+        if(day.isEmpty() == false) {
+            Holiday holiday;
 
-            QStringList rests = days.first().trimmed().split('~', Qt::SkipEmptyParts);
-            start = QDate::fromString(QString("%1-%2").arg(year).arg(rests.first().trimmed()), "yyyy-MM-dd");
-            end = rests.count() > 1 ? QDate::fromString(QString("%1-%2").arg(year).arg(rests.last().trimmed()), "yyyy-MM-dd") : start;
+            holiday.m_title = m_settings.value("title").toString();
+            holiday.m_day = QDate::fromString(QString("%1-%2").arg(year).arg(day), "yyyy-MM-dd");
+            holiday.m_start = QDate::fromString(QString("%1-%2").arg(year).arg(m_settings.value("start", day).toString()), "yyyy-MM-dd");
+            holiday.m_end = QDate::fromString(QString("%1-%2").arg(year).arg(m_settings.value("end", day).toString()), "yyyy-MM-dd");
 
-            if(days.count() > 1)
-            for(auto day : days.last().trimmed().split('~', Qt::SkipEmptyParts))
-                works.append(QDate::fromString(QString("%1-%2").arg(year).arg(day.trimmed()), "yyyy-MM-dd"));
+            for(auto day : m_settings.value("work").toStringList())
+                holiday.m_workdays.append(QDate::fromString(QString("%1-%2").arg(year).arg(day), "yyyy-MM-dd"));
 
-            list.append(Holiday(start, end, works));
+            list.append(holiday);
         }
     }
     m_settings.endArray();
-
     return list;
 }

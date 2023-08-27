@@ -32,8 +32,10 @@ class DatetimeWidget : public QWidget
 public:
     explicit DatetimeWidget(QWidget *parent = 0);
 
-    QSize sizeHint() const;
     QStringList dateString();
+
+protected:
+    void mouseReleaseEvent(QMouseEvent *e) override;
 
 signals:
     void requestUpdateGeometry() const;
@@ -42,12 +44,11 @@ public slots:
     void setFormat(QString format);
 
 private:
-    void paintEvent(QPaintEvent *e);
+    void paintEvent(QPaintEvent *e) override;
     QString currentChinaTime() const;
 
 private:
     QString m_format;
-    mutable QFont m_timeFont;
 };
 
 #endif // DATETIMEWIDGET_H

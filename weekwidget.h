@@ -19,6 +19,10 @@ class WeekWidget : public QWidget
         void updateTime();
         void refresh();
 
+    protected:
+        void showEvent(QShowEvent *event) override;
+        void hideEvent(QHideEvent *event) override;
+
     private slots:
         void showMonth();
 
